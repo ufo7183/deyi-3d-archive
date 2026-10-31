@@ -13,7 +13,7 @@
 <div class="ui" id="mainUI">
 <header class="header"><div><div class="brand">得邑 <span style="font-weight:300;color:#a98d60">｜</span> 上．經典</div><div class="eyebrow">DE-YI ARCHITECTURAL ARCHIVE</div></div><div class="topright">THE ARCHITECTURAL ARCANA<br>2002 — 2023</div></header>
 <section class="intro"><div class="en">A COLLECTION OF TIME & SPACE</div><h1>築時之環</h1><p>二十二載建築時光，化作環繞的典藏卡牌。<br>點選一個年份，開啟一段建築故事。</p></section>
-<footer class="bottom"><div class="hint">◌ &nbsp;拖曳轉動 3D 星環 · 點選年份抽牌<br><span style="opacity:.65">SELECT A YEAR TO EXPLORE</span></div><button class="outline" id="openIndex">全部年份　↗</button></footer>
+<footer class="bottom"><div class="hint">◌ &nbsp;左右拖曳旋轉卡牌 · 點選年份抽牌<br><span style="opacity:.65">SELECT A YEAR TO EXPLORE</span></div><button class="outline" id="openIndex">全部年份　↗</button></footer>
 </div>
 <section id="yearIndex" role="dialog" aria-label="全部年份" aria-modal="true"><div class="index-head"><h2>建築年份典藏</h2><button id="closeIndex" class="outline">關閉 ×</button></div><p style="color:#877866;font-size:13px;margin-bottom:25px">選擇年份，打開建築藍圖</p><div class="years" id="years"></div><p class="credit">此版本為互動原型；年份與部分建案名稱依得邑官網，牌面照片尚未換成原站實景。</p></section>
 <div class="modal" id="modal" role="dialog" aria-label="年度建築藍圖" aria-modal="true"><div class="board" id="board"><div class="board-top"><div><small>ARCHITECTURAL BLUEPRINT / DE-YI</small><h2 id="modalYear">2023</h2><small>時光典藏 · 年度建築作品</small></div><button id="closeModal" class="outline">返回星環　×</button></div><div class="project-grid" id="projectGrid"></div><div class="detail" id="detail"></div><p class="credit">年份與已核對之作品名稱依得邑官網；建築圖片目前仍是原型示意，請以官網實景照片為準。</p></div></div>
@@ -45,33 +45,43 @@ const camera=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,.1,100);camer
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.outputColorSpace=THREE.SRGBColorSpace;$('stage').appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xffffff,0xbea785,3));const sunlight=new THREE.DirectionalLight(0xfff5da,3);sunlight.position.set(-8,10,14);scene.add(sunlight);
 const ambientGroup=new THREE.Group();scene.add(ambientGroup);
-// True 3D orbital trajectories in tilted planes, not a 2D fan.
-for(const [rad,tilt,yOffset] of [[7.2,.28,.1],[4.8,-.24,.25]]) {
- const pts=[];for(let q=0;q<=200;q++){const a=q/200*Math.PI*2;pts.push(new THREE.Vector3(Math.sin(a)*rad,Math.cos(a)*rad*.59+yOffset+Math.sin(a)*tilt*2,Math.cos(a)*rad*.58))}
- const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0xb39973,transparent:true,opacity:.24}));ambientGroup.add(line);
-}
+// One sculptural circular carousel, with its orbit beneath the floating cards.
+const RADIUS=9.6;
+const ringPoints=[];
+for(let i=0;i<=240;i++){const a=i/240*Math.PI*2;ringPoints.push(new THREE.Vector3(Math.sin(a)*RADIUS,-2.55,Math.cos(a)*RADIUS))}
+ambientGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(ringPoints),new THREE.LineBasicMaterial({color:0xab8a57,transparent:true,opacity:.43})));
 const cards=[];const raycaster=new THREE.Raycaster();const pointer=new THREE.Vector2(20,20);const cardGroup=new THREE.Group();scene.add(cardGroup);const loader=new THREE.CanvasTexture(face(2023));loader.dispose();
 function build(){
- years.forEach((year,i)=>{const outer=i<12,n=outer?12:10,j=outer?i:i-12,angle=(j/n)*Math.PI*2-Math.PI/2;
- const radius=outer?7.2:4.8;
- const orbitAngle=angle;
- const origin=new THREE.Vector3(Math.sin(orbitAngle)*radius,Math.cos(orbitAngle)*radius*.59+(outer?-.1:.25)+Math.sin(orbitAngle)*(outer?.56:-.48),Math.cos(orbitAngle)*radius*.58+(outer?0:-.45));
- const group=new THREE.Group();group.position.copy(origin);group.rotation.z=-Math.sin(angle)*.16;group.rotation.y=Math.sin(angle)*.35;group.rotation.x=outer?.08:-.12;
- const geo=new THREE.BoxGeometry(1.65,2.52,.22);
+ years.forEach((year,i)=>{
+ const angle=i/years.length*Math.PI*2;
+ const origin=new THREE.Vector3(Math.sin(angle)*RADIUS,0,Math.cos(angle)*RADIUS);
+ const group=new THREE.Group();group.position.copy(origin);group.rotation.y=angle;
+ const geo=new THREE.BoxGeometry(2.65,4.05,.27);
  const front=new THREE.CanvasTexture(face(year));front.colorSpace=THREE.SRGBColorSpace;front.anisotropy=renderer.capabilities.getMaxAnisotropy();
  const back=new THREE.CanvasTexture(face(year,true));back.colorSpace=THREE.SRGBColorSpace;
- const edge=new THREE.MeshStandardMaterial({color:0xb49a73,metalness:.72,roughness:.25});
- const mesh=new THREE.Mesh(geo,[edge,edge,edge,edge,new THREE.MeshStandardMaterial({map:front,metalness:0,roughness:.78}),new THREE.MeshStandardMaterial({map:back,metalness:0,roughness:.78})]);
- // BoxGeometry face index 4 is +Z, index 5 is -Z.
- group.add(mesh);cardGroup.add(group);const item={year,group,mesh,origin,angle,outer,restRotation:group.rotation.clone()};mesh.userData.item=item;cards.push(item);group.scale.setScalar(.01);
- if(!reduced)gsap.to(group.scale,{x:1,y:1,z:1,duration:1.25,delay:i*.035,ease:'back.out(1.6)'});else group.scale.setScalar(1);
+ const edge=new THREE.MeshStandardMaterial({color:0xb49a73,metalness:.78,roughness:.25});
+ const mesh=new THREE.Mesh(geo,[edge,edge,edge,edge,new THREE.MeshStandardMaterial({map:front,metalness:.08,roughness:.62}),new THREE.MeshStandardMaterial({map:back,metalness:.08,roughness:.62})]);
+ group.add(mesh);cardGroup.add(group);
+ const item={year,group,mesh,origin,angle,restRotation:group.rotation.clone()};
+ mesh.userData.item=item;cards.push(item);group.scale.setScalar(.001);
+ if(reduced)group.scale.setScalar(1);else gsap.to(group.scale,{x:1,y:1,z:1,duration:1.1,delay:i*.035,ease:'back.out(1.3)'});
  });
 }
 build();
-function showYear(year){if(busy||modalOpen)return;const card=cards.find(c=>c.year===year);if(!card)return;busy=true;active=card;selected=year;gsap.killTweensOf(card.group.position);const d=reduced?0:.75;
- gsap.to(cards.filter(c=>c!==card).map(c=>c.group.scale),{x:.85,y:.85,z:.85,opacity:0,duration:d*.7});
- gsap.to(card.group.position,{x:0,y:0,z:8,duration:d,ease:'power3.inOut'});
- gsap.to(card.group.rotation,{x:0,y:Math.PI,z:0,duration:d,delay:d*.8,ease:'power3.inOut',onComplete:()=>{openBlueprint(year);busy=false}});
+function showYear(year){
+ if(busy||modalOpen)return;
+ const card=cards.find(c=>c.year===year);if(!card)return;
+ busy=true;active=card;selected=year;
+ const duration=reduced?0:.65;
+ let target=-card.angle;
+ while(target-cardGroup.rotation.y>Math.PI)target-=Math.PI*2;
+ while(target-cardGroup.rotation.y< -Math.PI)target+=Math.PI*2;
+ orbitOffset=target;lastInput=performance.now();
+ const tl=gsap.timeline();
+ tl.to(cardGroup.rotation,{y:target,duration:duration,ease:'power2.inOut'});
+ tl.to(card.group.position,{x:0,y:0,z:RADIUS+2.6,duration:duration,ease:'power3.inOut'});
+ tl.to(card.group.rotation,{x:0,y:Math.PI+card.angle,z:0,duration:duration,ease:'power3.inOut'},'<');
+ tl.call(()=>{openBlueprint(year);busy=false});
 }
 function openBlueprint(year){modalOpen=true;$('modalYear').textContent=year;const names=known[year]||[];$('projectGrid').replaceChildren();$('detail').classList.remove('open');
  names.forEach((name,i)=>{const btn=document.createElement('button');btn.className='project-card';btn.style.animationDelay=(i*.10)+'s';const img=document.createElement('img');img.src=dataURL(year+i);img.alt=name+' 建築概念圖';const strong=document.createElement('strong');strong.textContent=name;const span=document.createElement('span');span.textContent='PROJECT 0'+(i+1);btn.append(img,strong,span);btn.addEventListener('click',()=>showProject(name,year+i));$('projectGrid').append(btn)});
@@ -88,15 +98,15 @@ function closeIndex(){$('yearIndex').classList.remove('open');$('openIndex').foc
 $('openIndex').onclick=openIndex;$('closeIndex').onclick=closeIndex;
 addEventListener('keydown',e=>{if(e.key==='Escape'){if($('yearIndex').classList.contains('open'))closeIndex();else closeBlueprint()}});
 let mouseX=0,mouseY=0;let dragStart=null;let dragMoved=false;let orbitOffset=0;let lastInput=performance.now();function locate(e){const r=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-r.left)/r.width)*2-1;pointer.y=-((e.clientY-r.top)/r.height)*2+1;mouseX=pointer.x;mouseY=pointer.y}
-renderer.domElement.addEventListener('pointermove',e=>{locate(e);if(dragStart&&!modalOpen){const dx=e.clientX-dragStart.x;if(Math.abs(dx)>6)dragMoved=true;orbitOffset=dragStart.offset+dx/220;lastInput=performance.now();}});renderer.domElement.addEventListener('pointerdown',e=>{dragStart={x:e.clientX,offset:orbitOffset};dragMoved=false});window.addEventListener('pointerup',()=>{setTimeout(()=>{dragStart=null},0)});
+renderer.domElement.addEventListener('pointermove',e=>{locate(e);if(dragStart&&!modalOpen){const dx=e.clientX-dragStart.x;if(Math.abs(dx)>6)dragMoved=true;orbitOffset=dragStart.offset+dx/380;lastInput=performance.now();}});renderer.domElement.addEventListener('pointerdown',e=>{dragStart={x:e.clientX,offset:orbitOffset};dragMoved=false});window.addEventListener('pointerup',()=>{setTimeout(()=>{dragStart=null},0)});
 renderer.domElement.addEventListener('pointerleave',()=>{pointer.set(20,20);hovered=null});
-renderer.domElement.addEventListener('wheel',e=>{if(modalOpen)return;orbitOffset+=Math.sign(e.deltaY)*.16;lastInput=performance.now()},{passive:true});renderer.domElement.addEventListener('click',e=>{locate(e);if(busy||modalOpen||dragMoved||$('yearIndex').classList.contains('open'))return;raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(cards.map(c=>c.mesh));if(hits.length)showYear(hits[0].object.userData.item.year)});
-function resize(){const w=innerWidth,h=innerHeight;camera.aspect=w/h;camera.position.z=w<850?35:29;camera.fov=w<850?55:46;camera.updateProjectionMatrix();renderer.setSize(w,h)}
+renderer.domElement.addEventListener('wheel',e=>{if(modalOpen)return;orbitOffset+=Math.sign(e.deltaY)*.19;lastInput=performance.now()},{passive:true});renderer.domElement.addEventListener('click',e=>{locate(e);if(busy||modalOpen||dragMoved||$('yearIndex').classList.contains('open'))return;raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(cards.map(c=>c.mesh));if(hits.length)showYear(hits[0].object.userData.item.year)});
+function resize(){const w=innerWidth,h=innerHeight;camera.aspect=w/h;camera.position.z=w<850?32:27;camera.fov=w<850?48:43;camera.updateProjectionMatrix();renderer.setSize(w,h)}
 addEventListener('resize',resize);resize();
 const clock=new THREE.Clock();
 function frame(){const t=clock.getElapsedTime();if(!modalOpen&&!busy){raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(cards.map(c=>c.mesh));const hit=hits[0]?.object.userData.item;document.body.style.cursor=hit?'pointer':'default';hovered=hit||null}
- if(!active&&!dragStart&&performance.now()-lastInput>3000&&!reduced)orbitOffset+=.0012;cards.forEach((c,i)=>{if(c===active)return;const target=c===hovered?1.18:1;const v=c.group.scale.x+(target-c.group.scale.x)*.085;if(!gsap.isTweening(c.group.scale))c.group.scale.setScalar(v);if(!gsap.isTweening(c.group.position)){c.group.position.z=c.origin.z+(c===hovered?1.15:0)+Math.sin(t*.55+i*.6)*.10}});
- if(!reduced){cardGroup.rotation.y+=(orbitOffset-cardGroup.rotation.y)*.055;cardGroup.rotation.x+=(Math.sin(orbitOffset*.5)*.09-cardGroup.rotation.x)*.02;camera.position.x+=(mouseX*.18-camera.position.x)*.018;camera.position.y+=(-mouseY*.12-camera.position.y)*.018}
+ if(!active&&!dragStart&&performance.now()-lastInput>4500&&!reduced)orbitOffset+=.00065;cards.forEach((c,i)=>{if(c===active)return;const target=c===hovered?1.09:1;const v=c.group.scale.x+(target-c.group.scale.x)*.085;if(!gsap.isTweening(c.group.scale))c.group.scale.setScalar(v);if(!gsap.isTweening(c.group.position)){c.group.position.z=c.origin.z+(c===hovered?.35:0)}});
+ if(!reduced&&!active){cardGroup.rotation.y+=(orbitOffset-cardGroup.rotation.y)*.085;camera.position.x+=(mouseX*.18-camera.position.x)*.018;camera.position.y+=(-mouseY*.12-camera.position.y)*.018}
  camera.lookAt(0,0,0);renderer.render(scene,camera)}
 renderer.setAnimationLoop(frame);
 </script>
