@@ -1,113 +1,12 @@
-<!doctype html>
-<html lang="zh-Hant">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#eee9df">
-<title>得邑建設｜上．經典 — 築時之環</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600&family=Noto+Serif+TC:wght@400;500;600&display=swap');
-:root{--ink:#302d29;--muted:#7b7165;--gold:#a98d60;--base:#f0ece4}*{box-sizing:border-box}html,body{margin:0;width:100%;min-height:100%;font-family:'Noto Sans TC',sans-serif;background:var(--base);color:var(--ink)}button{font:inherit;cursor:pointer}#stage{position:fixed;inset:0;z-index:0}canvas{display:block}#veil{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 44%,transparent 30%,rgba(205,185,151,.15) 90%);z-index:1}.ui{position:relative;z-index:3;pointer-events:none;min-height:100svh;display:flex;flex-direction:column;padding:32px clamp(20px,4vw,72px)}.ui button,.ui a{pointer-events:auto}.header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}.brand{font-family:'Noto Serif TC',serif;font-weight:600;font-size:25px;letter-spacing:.15em}.eyebrow{font-size:10px;letter-spacing:.31em;color:var(--muted);margin-top:10px}.topright{font-size:11px;letter-spacing:.12em;color:var(--muted);text-align:right}.intro{margin:auto 0 auto 0;max-width:320px}.intro .en{font:300 11px/1.8 Georgia,serif;letter-spacing:.28em;color:var(--gold)}.intro h1{font:500 clamp(26px,3.6vw,56px)/1.35 'Noto Serif TC',serif;letter-spacing:.15em;margin:14px 0}.intro p{font-size:13px;line-height:2.2;color:var(--muted);max-width:270px}.bottom{display:flex;justify-content:space-between;align-items:end;gap:20px}.hint{font-size:11px;letter-spacing:.14em;color:var(--muted)}.outline{padding:11px 18px;background:rgba(251,248,240,.75);border:1px solid #c9b9a3;color:var(--ink);border-radius:0;letter-spacing:.1em;font-size:12px;backdrop-filter:blur(9px);transition:background .2s}.outline:hover{background:#fff}.outline:focus-visible,.year-btn:focus-visible,.project-card:focus-visible{outline:3px solid #8b7146;outline-offset:3px}#yearIndex{position:fixed;z-index:7;inset:0;background:rgba(245,241,232,.97);padding:clamp(20px,5vw,72px);overflow:auto;display:none}#yearIndex.open{display:block}.index-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}.index-head h2{font:500 28px 'Noto Serif TC',serif;margin:0}.years{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:10px}.year-btn{aspect-ratio:3/4;background:#ebe4d7;border:1px solid #cfc3b1;display:flex;flex-direction:column;align-items:center;justify-content:end;padding:7px;gap:10px;color:var(--ink);transition:transform .2s,box-shadow .2s}.year-btn:hover{transform:translateY(-5px);box-shadow:0 14px 25px #8f7a5e33}.year-btn img{width:100%;height:72%;object-fit:cover}.year-btn b{font:500 14px Georgia,serif}.modal{position:fixed;z-index:6;inset:0;display:none;align-items:center;justify-content:center;background:rgba(232,223,208,.55);backdrop-filter:blur(10px);padding:20px}.modal.open{display:flex}.board{position:relative;width:min(1050px,100%);max-height:90svh;overflow:auto;background:#f8f5ef;border:1px solid #bba783;box-shadow:0 35px 100px #6e5b493d;padding:clamp(23px,4vw,53px);background-image:linear-gradient(#c7b79a19 1px,transparent 1px),linear-gradient(90deg,#c7b79a19 1px,transparent 1px);background-size:27px 27px;transform-origin:center}.board-top{display:flex;justify-content:space-between;gap:20px;align-items:start}.board h2{font:400 clamp(36px,5vw,65px) Georgia,serif;margin:5px 0}.board small{letter-spacing:.2em;color:#947954}.project-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:30px 0}.project-card{border:1px solid #cbbba0;background:#fffdf9;padding:8px;text-align:left;animation:rise .65s both;transition:transform .25s}.project-card:hover{transform:translateY(-5px)}.project-card img{width:100%;aspect-ratio:3/4;object-fit:cover}.project-card strong{display:block;font-weight:500;font-size:14px;margin:10px 0 2px}.project-card span{font-size:10px;color:#9d8b75}.detail{display:none;background:#faf8f4;padding:20px;border-top:1px solid #cfbfa5}.detail.open{display:block}.detail img{width:min(100%,360px);max-height:240px;object-fit:cover;float:left;margin-right:25px}.detail h3{font:500 26px 'Noto Serif TC';margin:10px 0}.detail p{font-size:13px;line-height:2;color:var(--muted)}.credit{font-size:10px;line-height:1.7;color:#9a8e7d}.mobileOnly{display:none}@keyframes rise{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}@media(max-width:850px){.ui{padding:22px}.topright{display:none}.intro{align-self:center;text-align:center;margin:0 auto;position:absolute;top:20%;left:20px;right:20px;max-width:none}.intro h1{font-size:29px}.intro p{display:none}.bottom{margin-top:auto;align-items:center}.hint{font-size:10px}.years{grid-template-columns:repeat(4,1fr)}.project-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.brand{font-size:22px}.mobileOnly{display:block}.board{padding:22px}.project-card strong{font-size:12px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
-</style>
-</head>
-<body>
-<div id="stage" aria-hidden="true"></div><div id="veil"></div>
-<div class="ui" id="mainUI">
-<header class="header"><div><div class="brand">得邑 <span style="font-weight:300;color:#a98d60">｜</span> 上．經典</div><div class="eyebrow">DE-YI ARCHITECTURAL ARCHIVE</div></div><div class="topright">THE ARCHITECTURAL ARCANA<br>2002 — 2023</div></header>
-<section class="intro"><div class="en">A COLLECTION OF TIME & SPACE</div><h1>築時之環</h1><p>二十二載建築時光，化作環繞的典藏卡牌。<br>點選一個年份，開啟一段建築故事。</p></section>
-<footer class="bottom"><div class="hint">◌ &nbsp;左右拖曳旋轉卡牌 · 點選年份抽牌<br><span style="opacity:.65">SELECT A YEAR TO EXPLORE</span></div><button class="outline" id="openIndex">全部年份　↗</button></footer>
-</div>
-<section id="yearIndex" role="dialog" aria-label="全部年份" aria-modal="true"><div class="index-head"><h2>建築年份典藏</h2><button id="closeIndex" class="outline">關閉 ×</button></div><p style="color:#877866;font-size:13px;margin-bottom:25px">選擇年份，打開建築藍圖</p><div class="years" id="years"></div><p class="credit">此版本為互動原型；年份與部分建案名稱依得邑官網，牌面照片尚未換成原站實景。</p></section>
-<div class="modal" id="modal" role="dialog" aria-label="年度建築藍圖" aria-modal="true"><div class="board" id="board"><div class="board-top"><div><small>ARCHITECTURAL BLUEPRINT / DE-YI</small><h2 id="modalYear">2023</h2><small>時光典藏 · 年度建築作品</small></div><button id="closeModal" class="outline">返回星環　×</button></div><div class="project-grid" id="projectGrid"></div><div class="detail" id="detail"></div><p class="credit">年份與已核對之作品名稱依得邑官網；建築圖片目前仍是原型示意，請以官網實景照片為準。</p></div></div>
-<script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
-import { gsap } from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/+esm';
-const years=Array.from({length:22},(_,i)=>2023-i);
-const known={2023:['等露','尋常院','借墨','掬茶金'],2022:['海洋恰恰','知一二','金宴'],2021:['一院九樹','山茶花森','花曆河','日光耶加'],2018:['白鹿山丘','18富','大藏'],2017:['和簷．悅舍','河日子','得邑萬市興'],2016:['里山六帖','早稻墅','得邑希真'],2015:['得邑倫敦大道','得邑巨商','墨問'],2014:['得邑．羅森堡','得邑捷市堡','得邑大道東','得邑道後'],2013:['得邑愛丁堡Ⅱ','得邑獅子堡','得邑香波堡Ⅱ','得邑佩納堡'],2009:['寬御','河堤大樂 No. 12','青年巨商No.13','青年巨商No.15']};
-const officialYear=year=>'https://www.de-yi.com.tw/'+year+'.htm';
-const $=id=>document.getElementById(id);
-let active=null,busy=false,selected=null,hovered=null,modalOpen=false;
-const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-function architecture(ctx,x,y,w,h,seed){
- ctx.save();const palettes=[['#c3beb0','#867f71','#e4d8c7'],['#d8cdbd','#9d9386','#b2bab2'],['#bbb9ae','#777f7b','#f0e7d7'],['#d2c7b5','#9b9b90','#c0a98d']];const p=palettes[seed%4];
- ctx.fillStyle=p[2];ctx.fillRect(x,y,w,h);ctx.fillStyle='#e8ddcc';ctx.fillRect(x,y+h*.72,w,h*.28);
- for(let k=0;k<3;k++){const bx=x+w*(.12+k*.25),by=y+h*(.31-(seed+k)%3*.075),bw=w*(.23+(seed%2)*.06),bh=y+h*.77-by;ctx.fillStyle=k===1?p[0]:p[1];ctx.fillRect(bx,by,bw,bh);ctx.fillStyle='#f2f0e8';ctx.fillRect(bx+3,by+5,bw-6,4);for(let yy=by+18;yy<by+bh-9;yy+=21){ctx.fillStyle='#677b7b';ctx.fillRect(bx+9,yy,bw*.27,13);ctx.fillStyle='#ded9cf';ctx.fillRect(bx+bw*.54,yy,bw*.25,13)}}
- ctx.fillStyle='#a0a59b';ctx.beginPath();ctx.arc(x+w*.07,y+h*.63,w*.095,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ded5c8';ctx.fillRect(x,y+h*.83,w,h*.17);ctx.restore();
-}
-function face(year,back=false){
- const c=document.createElement('canvas');c.width=400;c.height=620;const x=c.getContext('2d');
- x.fillStyle='#f8f4ec';x.fillRect(0,0,400,620);x.strokeStyle='#ad9670';x.lineWidth=3;x.strokeRect(17,17,366,586);x.strokeStyle='#c8b99f';x.lineWidth=1;x.strokeRect(27,27,346,566);
- if(!back){architecture(x,40,42,320,445,year);x.fillStyle='#292a27';x.font='48px Georgia';x.textAlign='center';x.fillText(year,200,553);x.font='12px Georgia';x.fillStyle='#927b5c';x.fillText('DE-YI  /  ARCHIVE',200,579);}
- else{x.strokeStyle='#a88e67';x.lineWidth=1.4;for(let i=0;i<7;i++){x.strokeRect(57+i*15,88+i*15,285-i*30,416-i*30)}x.beginPath();x.arc(200,310,112,0,Math.PI*2);x.stroke();x.beginPath();x.moveTo(200,80);x.lineTo(200,540);x.moveTo(45,310);x.lineTo(355,310);x.stroke();x.fillStyle='#7f6e56';x.textAlign='center';x.font='25px Georgia';x.fillText('D E - Y I',200,305);x.font='12px Georgia';x.fillText('ARCHITECTURAL DRAWINGS',200,334);}
- return c;
-}
-const cache=new Map();function dataURL(year){if(!cache.has(year))cache.set(year,face(year).toDataURL('image/png'));return cache.get(year)}
-const scene=new THREE.Scene();scene.background=new THREE.Color('#eee9df');scene.fog=new THREE.FogExp2('#eee9df',.018);
-const camera=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,.1,100);camera.position.set(0,0,26);
-const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.outputColorSpace=THREE.SRGBColorSpace;$('stage').appendChild(renderer.domElement);
-scene.add(new THREE.HemisphereLight(0xffffff,0xbea785,3));const sunlight=new THREE.DirectionalLight(0xfff5da,3);sunlight.position.set(-8,10,14);scene.add(sunlight);
-const ambientGroup=new THREE.Group();scene.add(ambientGroup);
-// One sculptural circular carousel, with its orbit beneath the floating cards.
-const RADIUS=9.6;
-const ringPoints=[];
-for(let i=0;i<=240;i++){const a=i/240*Math.PI*2;ringPoints.push(new THREE.Vector3(Math.sin(a)*RADIUS,-2.55,Math.cos(a)*RADIUS))}
-ambientGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(ringPoints),new THREE.LineBasicMaterial({color:0xab8a57,transparent:true,opacity:.43})));
-const cards=[];const raycaster=new THREE.Raycaster();const pointer=new THREE.Vector2(20,20);const cardGroup=new THREE.Group();scene.add(cardGroup);const loader=new THREE.CanvasTexture(face(2023));loader.dispose();
-function build(){
- years.forEach((year,i)=>{
- const angle=i/years.length*Math.PI*2;
- const origin=new THREE.Vector3(Math.sin(angle)*RADIUS,0,Math.cos(angle)*RADIUS);
- const group=new THREE.Group();group.position.copy(origin);group.rotation.y=angle;
- const geo=new THREE.BoxGeometry(2.65,4.05,.27);
- const front=new THREE.CanvasTexture(face(year));front.colorSpace=THREE.SRGBColorSpace;front.anisotropy=renderer.capabilities.getMaxAnisotropy();
- const back=new THREE.CanvasTexture(face(year,true));back.colorSpace=THREE.SRGBColorSpace;
- const edge=new THREE.MeshStandardMaterial({color:0xb49a73,metalness:.78,roughness:.25});
- const mesh=new THREE.Mesh(geo,[edge,edge,edge,edge,new THREE.MeshStandardMaterial({map:front,metalness:.08,roughness:.62}),new THREE.MeshStandardMaterial({map:back,metalness:.08,roughness:.62})]);
- group.add(mesh);cardGroup.add(group);
- const item={year,group,mesh,origin,angle,restRotation:group.rotation.clone()};
- mesh.userData.item=item;cards.push(item);group.scale.setScalar(.001);
- if(reduced)group.scale.setScalar(1);else gsap.to(group.scale,{x:1,y:1,z:1,duration:1.1,delay:i*.035,ease:'back.out(1.3)'});
- });
-}
-build();
-function showYear(year){
- if(busy||modalOpen)return;
- const card=cards.find(c=>c.year===year);if(!card)return;
- busy=true;active=card;selected=year;
- const duration=reduced?0:.65;
- let target=-card.angle;
- while(target-cardGroup.rotation.y>Math.PI)target-=Math.PI*2;
- while(target-cardGroup.rotation.y< -Math.PI)target+=Math.PI*2;
- orbitOffset=target;lastInput=performance.now();
- const tl=gsap.timeline();
- tl.to(cardGroup.rotation,{y:target,duration:duration,ease:'power2.inOut'});
- tl.to(card.group.position,{x:0,y:0,z:RADIUS+2.6,duration:duration,ease:'power3.inOut'});
- tl.to(card.group.rotation,{x:0,y:Math.PI+card.angle,z:0,duration:duration,ease:'power3.inOut'},'<');
- tl.call(()=>{openBlueprint(year);busy=false});
-}
-function openBlueprint(year){modalOpen=true;$('modalYear').textContent=year;const names=known[year]||[];$('projectGrid').replaceChildren();$('detail').classList.remove('open');
- names.forEach((name,i)=>{const btn=document.createElement('button');btn.className='project-card';btn.style.animationDelay=(i*.10)+'s';const img=document.createElement('img');img.src=dataURL(year+i);img.alt=name+' 建築概念圖';const strong=document.createElement('strong');strong.textContent=name;const span=document.createElement('span');span.textContent='PROJECT 0'+(i+1);btn.append(img,strong,span);btn.addEventListener('click',()=>showProject(name,year+i));$('projectGrid').append(btn)});
- const off=document.createElement('a');off.className='outline';off.href=officialYear(year);off.target='_blank';off.rel='noopener noreferrer';off.textContent='查看得邑官網 '+year+' 年完整作品 ↗';off.style.display='inline-block';off.style.marginBottom='16px';$('projectGrid').append(off);$('modal').classList.add('open');document.body.style.overflow='hidden';
- gsap.fromTo('#board',{scale:.68,opacity:0,rotateX:-12},{scale:1,opacity:1,rotateX:0,duration:reduced?0:.85,ease:'power3.out'});
-}
-function showProject(name,seed){const d=$('detail');d.replaceChildren();const img=document.createElement('img');img.src=dataURL(seed);img.alt='建築概念示意圖';const h=document.createElement('h3');h.textContent=name;const p=document.createElement('p');p.textContent='此為建築影像佔位圖。實際作品圖文請點年度官網連結查看，正式版須以原站照片及文案替換。';d.append(img,h,p);d.classList.add('open');d.scrollIntoView({behavior:reduced?'instant':'smooth',block:'nearest'})}
-function closeBlueprint(){if(!modalOpen)return;modalOpen=false;$('modal').classList.remove('open');document.body.style.overflow='';if(active){gsap.to(active.group.position,{x:active.origin.x,y:active.origin.y,z:active.origin.z,duration:reduced?0:.8,ease:'power3.inOut'});gsap.to(active.group.rotation,{x:active.restRotation.x,y:active.restRotation.y,z:active.restRotation.z,duration:reduced?0:.8});gsap.to(cards.map(c=>c.group.scale),{x:1,y:1,z:1,duration:reduced?0:.6});active=null}}
-$('closeModal').addEventListener('click',closeBlueprint);
-$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeBlueprint()});
-years.forEach(y=>{const b=document.createElement('button');b.className='year-btn';const img=document.createElement('img');img.src=dataURL(y);img.alt='';const strong=document.createElement('b');strong.textContent=y;b.append(img,strong);b.addEventListener('click',()=>{closeIndex();if(modalOpen)closeBlueprint();setTimeout(()=>showYear(y),reduced?0:900)});$('years').append(b)});
-function openIndex(){$('yearIndex').classList.add('open');$('closeIndex').focus()}
-function closeIndex(){$('yearIndex').classList.remove('open');$('openIndex').focus()}
-$('openIndex').onclick=openIndex;$('closeIndex').onclick=closeIndex;
-addEventListener('keydown',e=>{if(e.key==='Escape'){if($('yearIndex').classList.contains('open'))closeIndex();else closeBlueprint()}});
-let mouseX=0,mouseY=0;let dragStart=null;let dragMoved=false;let orbitOffset=0;let lastInput=performance.now();function locate(e){const r=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-r.left)/r.width)*2-1;pointer.y=-((e.clientY-r.top)/r.height)*2+1;mouseX=pointer.x;mouseY=pointer.y}
-renderer.domElement.addEventListener('pointermove',e=>{locate(e);if(dragStart&&!modalOpen){const dx=e.clientX-dragStart.x;if(Math.abs(dx)>6)dragMoved=true;orbitOffset=dragStart.offset+dx/380;lastInput=performance.now();}});renderer.domElement.addEventListener('pointerdown',e=>{dragStart={x:e.clientX,offset:orbitOffset};dragMoved=false});window.addEventListener('pointerup',()=>{setTimeout(()=>{dragStart=null},0)});
-renderer.domElement.addEventListener('pointerleave',()=>{pointer.set(20,20);hovered=null});
-renderer.domElement.addEventListener('wheel',e=>{if(modalOpen)return;orbitOffset+=Math.sign(e.deltaY)*.19;lastInput=performance.now()},{passive:true});renderer.domElement.addEventListener('click',e=>{locate(e);if(busy||modalOpen||dragMoved||$('yearIndex').classList.contains('open'))return;raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(cards.map(c=>c.mesh));if(hits.length)showYear(hits[0].object.userData.item.year)});
-function resize(){const w=innerWidth,h=innerHeight;camera.aspect=w/h;camera.position.z=w<850?32:27;camera.fov=w<850?48:43;camera.updateProjectionMatrix();renderer.setSize(w,h)}
-addEventListener('resize',resize);resize();
-const clock=new THREE.Clock();
-function frame(){const t=clock.getElapsedTime();if(!modalOpen&&!busy){raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(cards.map(c=>c.mesh));const hit=hits[0]?.object.userData.item;document.body.style.cursor=hit?'pointer':'default';hovered=hit||null}
- if(!active&&!dragStart&&performance.now()-lastInput>4500&&!reduced)orbitOffset+=.00065;cards.forEach((c,i)=>{if(c===active)return;const target=c===hovered?1.09:1;const v=c.group.scale.x+(target-c.group.scale.x)*.085;if(!gsap.isTweening(c.group.scale))c.group.scale.setScalar(v);if(!gsap.isTweening(c.group.position)){c.group.position.z=c.origin.z+(c===hovered?.35:0)}});
- if(!reduced&&!active){cardGroup.rotation.y+=(orbitOffset-cardGroup.rotation.y)*.085;camera.position.x+=(mouseX*.18-camera.position.x)*.018;camera.position.y+=(-mouseY*.12-camera.position.y)*.018}
- camera.lookAt(0,0,0);renderer.render(scene,camera)}
-renderer.setAnimationLoop(frame);
-</script>
-</body></html>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#03050a"><title>得邑建設｜上．經典 · 築時之環</title><link rel="stylesheet" href="./styles.css"></head><body>
+<div class="environment"><div class="stars"></div><div class="arch one"></div><div class="arch two"></div><div class="arch three"></div><div class="floor"></div></div>
+<div id="scene" aria-label="22 張懸浮建築年份卡，左右拖曳旋轉"></div>
+<main class="ui"><div class="brand">得邑｜上．經典<span>DE-YI ARCHITECTURAL ARCHIVE</span></div>
+<div class="hero"><div class="kicker">THE ARCHITECTURAL CAROUSEL</div><h1>Choose a Year</h1><p>每一張卡牌，都珍藏一段建築時光</p>
+<div class="focus"><button id="prev" class="arrow" aria-label="上一年">‹</button><div class="focus-info"><small>IN FOCUS</small><strong id="focus-year">2023</strong><span id="focus-desc">等露 · 尋常院 · 借墨 · 掬茶金</span></div><button id="next" class="arrow" aria-label="下一年">›</button></div>
+<div class="actions"><button class="pill" id="shuffle">隨機年份</button><button class="pill" id="explore"><span id="open-label">探索 2023 年</span> ↗</button></div></div>
+<div class="bottom">拖曳轉動卡牌 · 點擊中央卡片探索作品<br>2002 — 2023 / 22 YEARS</div>
+<button class="pill index-btn" id="all-years">全部年份</button></main>
+<section class="overlay" id="index" role="dialog" aria-label="全部年份"><div class="panel"><div class="panel-head"><div><small>DE-YI CLASSIC WORKS</small><h2>All Years</h2></div><button class="pill" id="close-index">關閉 ×</button></div><p>快速選擇年份，卡牌將轉到中央。</p><div class="years" id="year-grid"></div></div></section>
+<section class="overlay" id="detail" role="dialog" aria-label="年度經典作品"><div class="panel"><div class="panel-head"><div><small>ARCHITECTURAL BLUEPRINT / DE-YI</small><h2 id="detail-year">2023</h2></div><button class="pill" id="close-detail">返回牌環 ×</button></div><p>建築設計圖・年度典藏。卡牌圖像為設計示意，實際建案照片與詳細文字以得邑官網為準。</p><div class="grid" id="projects"></div><a class="official" id="official" href="https://www.de-yi.com.tw/classic.htm" target="_blank" rel="noopener noreferrer">前往得邑官網查看作品 ↗</a></div></section>
+<script type="module" src="./app.js"></script></body></html>
