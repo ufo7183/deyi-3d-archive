@@ -13,7 +13,7 @@
 <div class="ui" id="mainUI">
 <header class="header"><div><div class="brand">得邑 <span style="font-weight:300;color:#a98d60">｜</span> 上．經典</div><div class="eyebrow">DE-YI ARCHITECTURAL ARCHIVE</div></div><div class="topright">THE ARCHITECTURAL ARCANA<br>2002 — 2023</div></header>
 <section class="intro"><div class="en">A COLLECTION OF TIME & SPACE</div><h1>築時之環</h1><p>二十二載建築時光，化作環繞的典藏卡牌。<br>點選一個年份，開啟一段建築故事。</p></section>
-<footer class="bottom"><div class="hint">◌ &nbsp;點選浮空年份卡，探索建築作品<br><span style="opacity:.65">SELECT A YEAR TO EXPLORE</span></div><button class="outline" id="openIndex">全部年份　↗</button></footer>
+<footer class="bottom"><div class="hint">◌ &nbsp;左右拖曳牌陣，點選年份抽牌<br><span style="opacity:.65">SELECT A YEAR TO EXPLORE</span></div><button class="outline" id="openIndex">全部年份　↗</button></footer>
 </div>
 <section id="yearIndex" role="dialog" aria-label="全部年份" aria-modal="true"><div class="index-head"><h2>建築年份典藏</h2><button id="closeIndex" class="outline">關閉 ×</button></div><p style="color:#877866;font-size:13px;margin-bottom:25px">選擇年份，打開建築藍圖</p><div class="years" id="years"></div><p class="credit">此版本為互動原型，卡面為程式生成的建築意象，非得邑實際建案照片。</p></section>
 <div class="modal" id="modal" role="dialog" aria-label="年度建築藍圖" aria-modal="true"><div class="board" id="board"><div class="board-top"><div><small>ARCHITECTURAL BLUEPRINT / DE-YI</small><h2 id="modalYear">2023</h2><small>時光典藏 · 年度建築作品</small></div><button id="closeModal" class="outline">返回星環　×</button></div><div class="project-grid" id="projectGrid"></div><div class="detail" id="detail"></div><p class="credit">展示用建築插畫為原型素材，尚未替換為業主授權的真實建案圖像與文案。</p></div></div>
@@ -44,12 +44,12 @@ const camera=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,.1,100);camer
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.outputColorSpace=THREE.SRGBColorSpace;$('stage').appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xffffff,0xbea785,3));const sunlight=new THREE.DirectionalLight(0xfff5da,3);sunlight.position.set(-8,10,14);scene.add(sunlight);
 const ambientGroup=new THREE.Group();scene.add(ambientGroup);
-for(const rad of [4.3,8.05]){const line=[];for(let i=0;i<=200;i++){const a=i/200*Math.PI*2;line.push(new THREE.Vector3(Math.sin(a)*rad,Math.cos(a)*rad*.48+Math.sin(a)*.65,-2.2+Math.cos(a)*2.0))}const geo=new THREE.BufferGeometry().setFromPoints(line);const ring=new THREE.Line(geo,new THREE.LineBasicMaterial({color:0xb69c74,transparent:true,opacity:.25}));ambientGroup.add(ring)}
+for(const row of [0,1]){const line=[];for(let i=0;i<=100;i++){const u=i/50-1;line.push(new THREE.Vector3(u*(row?5.2:7.0),(row?1.8:-1.3)+Math.pow(Math.abs(u),1.7)*(row?1.65:2.5), (row?-1.15:1.3)-Math.abs(u)*1.85-.1))}ambientGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(line),new THREE.LineBasicMaterial({color:0xb69c74,transparent:true,opacity:.3})))}
 const cards=[];const raycaster=new THREE.Raycaster();const pointer=new THREE.Vector2(20,20);const cardGroup=new THREE.Group();scene.add(cardGroup);const loader=new THREE.CanvasTexture(face(2023));loader.dispose();
 function build(){
  years.forEach((year,i)=>{const outer=i<12,n=outer?12:10,j=outer?i:i-12,angle=(j/n)*Math.PI*2-Math.PI/2;
- const rx=outer?8.05:4.3,ry=outer?3.85:2.10;const depth=Math.cos(angle)*2.5+Math.sin(angle)*.65;const origin=new THREE.Vector3(Math.cos(angle)*rx,Math.sin(angle)*ry,outer?depth:-2.0+depth*.6);
- const group=new THREE.Group();group.position.copy(origin);group.rotation.z= -Math.cos(angle)*.10;group.rotation.y=-Math.cos(angle)*.32;group.rotation.x=Math.sin(angle)*.13;
+ const spread=(i-10.5)/10.5;const row=outer?0:1;const local=outer?i:i-12;const count=outer?12:10;const curve=(local-(count-1)/2)/((count-1)/2);const origin=new THREE.Vector3(curve*(outer?6.75:5.0), (outer?-1.3:1.8)+Math.pow(Math.abs(curve),1.7)*(outer?2.5:1.65), (outer?1.3:-1.1)-Math.abs(curve)*1.85);
+ const group=new THREE.Group();group.position.copy(origin);group.rotation.z=-curve*(outer?.32:.24);group.rotation.y=-curve*.43;group.rotation.x=-.13+Math.abs(curve)*.07;
  const geo=new THREE.BoxGeometry(1.65,2.52,.22);
  const front=new THREE.CanvasTexture(face(year));front.colorSpace=THREE.SRGBColorSpace;front.anisotropy=renderer.capabilities.getMaxAnisotropy();
  const back=new THREE.CanvasTexture(face(year,true));back.colorSpace=THREE.SRGBColorSpace;
@@ -63,7 +63,7 @@ function build(){
 build();
 function showYear(year){if(busy||modalOpen)return;const card=cards.find(c=>c.year===year);if(!card)return;busy=true;active=card;selected=year;gsap.killTweensOf(card.group.position);const d=reduced?0:.75;
  gsap.to(cards.filter(c=>c!==card).map(c=>c.group.scale),{x:.85,y:.85,z:.85,opacity:0,duration:d*.7});
- gsap.to(card.group.position,{x:0,y:0,z:7.2,duration:d,ease:'power3.inOut'});
+ gsap.to(card.group.position,{x:0,y:0,z:8,duration:d,ease:'power3.inOut'});
  gsap.to(card.group.rotation,{x:0,y:Math.PI,z:0,duration:d,delay:d*.8,ease:'power3.inOut',onComplete:()=>{openBlueprint(year);busy=false}});
 }
 function openBlueprint(year){modalOpen=true;$('modalYear').textContent=year;const names=known[year]||[year+' 年代表建築'];$('projectGrid').replaceChildren();$('detail').classList.remove('open');
@@ -80,16 +80,16 @@ function openIndex(){$('yearIndex').classList.add('open');$('closeIndex').focus(
 function closeIndex(){$('yearIndex').classList.remove('open');$('openIndex').focus()}
 $('openIndex').onclick=openIndex;$('closeIndex').onclick=closeIndex;
 addEventListener('keydown',e=>{if(e.key==='Escape'){if($('yearIndex').classList.contains('open'))closeIndex();else closeBlueprint()}});
-let mouseX=0,mouseY=0;function locate(e){const r=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-r.left)/r.width)*2-1;pointer.y=-((e.clientY-r.top)/r.height)*2+1;mouseX=pointer.x;mouseY=pointer.y}
-renderer.domElement.addEventListener('pointermove',locate);
+let mouseX=0,mouseY=0;let dragStart=null;let dragMoved=false;let orbitOffset=0;function locate(e){const r=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-r.left)/r.width)*2-1;pointer.y=-((e.clientY-r.top)/r.height)*2+1;mouseX=pointer.x;mouseY=pointer.y}
+renderer.domElement.addEventListener('pointermove',e=>{locate(e);if(dragStart&&!modalOpen){const dx=e.clientX-dragStart.x;if(Math.abs(dx)>6)dragMoved=true;orbitOffset=Math.max(-2.2,Math.min(2.2,dragStart.offset+dx/230));}});renderer.domElement.addEventListener('pointerdown',e=>{dragStart={x:e.clientX,offset:orbitOffset};dragMoved=false});window.addEventListener('pointerup',()=>{setTimeout(()=>{dragStart=null},0)});
 renderer.domElement.addEventListener('pointerleave',()=>{pointer.set(20,20);hovered=null});
-renderer.domElement.addEventListener('click',e=>{locate(e);if(busy||modalOpen||$('yearIndex').classList.contains('open'))return;raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(cards.map(c=>c.mesh));if(hits.length)showYear(hits[0].object.userData.item.year)});
+renderer.domElement.addEventListener('click',e=>{locate(e);if(busy||modalOpen||dragMoved||$('yearIndex').classList.contains('open'))return;raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(cards.map(c=>c.mesh));if(hits.length)showYear(hits[0].object.userData.item.year)});
 function resize(){const w=innerWidth,h=innerHeight;camera.aspect=w/h;camera.position.z=w<850?36:27;camera.fov=w<850?53:44;camera.updateProjectionMatrix();renderer.setSize(w,h)}
 addEventListener('resize',resize);resize();
 const clock=new THREE.Clock();
 function frame(){const t=clock.getElapsedTime();if(!modalOpen&&!busy){raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(cards.map(c=>c.mesh));const hit=hits[0]?.object.userData.item;document.body.style.cursor=hit?'pointer':'default';hovered=hit||null}
  cards.forEach((c,i)=>{if(c===active)return;const target=c===hovered?1.18:1;const v=c.group.scale.x+(target-c.group.scale.x)*.085;if(!gsap.isTweening(c.group.scale))c.group.scale.setScalar(v);if(!gsap.isTweening(c.group.position)){c.group.position.z=c.origin.z+(c===hovered?1.15:0)+Math.sin(t*.55+i*.6)*.10}});
- if(!reduced){camera.position.x+=(mouseX*.18-camera.position.x)*.018;camera.position.y+=(-mouseY*.12-camera.position.y)*.018}
+ if(!reduced){cardGroup.rotation.y+=(orbitOffset-cardGroup.rotation.y)*.045;camera.position.x+=(mouseX*.18-camera.position.x)*.018;camera.position.y+=(-mouseY*.12-camera.position.y)*.018}
  camera.lookAt(0,0,0);renderer.render(scene,camera)}
 renderer.setAnimationLoop(frame);
 </script>
