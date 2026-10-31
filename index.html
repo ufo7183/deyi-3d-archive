@@ -44,19 +44,19 @@ const camera=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,.1,100);camer
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.outputColorSpace=THREE.SRGBColorSpace;$('stage').appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xffffff,0xbea785,3));const sunlight=new THREE.DirectionalLight(0xfff5da,3);sunlight.position.set(-8,10,14);scene.add(sunlight);
 const ambientGroup=new THREE.Group();scene.add(ambientGroup);
-for(const rad of [5.0,8.5]){const line=[];for(let i=0;i<=200;i++){const a=i/200*Math.PI*2;line.push(new THREE.Vector3(Math.sin(a)*rad,Math.cos(a)*rad*.49,-3))}const geo=new THREE.BufferGeometry().setFromPoints(line);const ring=new THREE.Line(geo,new THREE.LineBasicMaterial({color:0xb69c74,transparent:true,opacity:.25}));ambientGroup.add(ring)}
+for(const rad of [4.3,8.05]){const line=[];for(let i=0;i<=200;i++){const a=i/200*Math.PI*2;line.push(new THREE.Vector3(Math.sin(a)*rad,Math.cos(a)*rad*.48+Math.sin(a)*.65,-2.2+Math.cos(a)*2.0))}const geo=new THREE.BufferGeometry().setFromPoints(line);const ring=new THREE.Line(geo,new THREE.LineBasicMaterial({color:0xb69c74,transparent:true,opacity:.25}));ambientGroup.add(ring)}
 const cards=[];const raycaster=new THREE.Raycaster();const pointer=new THREE.Vector2(20,20);const cardGroup=new THREE.Group();scene.add(cardGroup);const loader=new THREE.CanvasTexture(face(2023));loader.dispose();
 function build(){
  years.forEach((year,i)=>{const outer=i<12,n=outer?12:10,j=outer?i:i-12,angle=(j/n)*Math.PI*2-Math.PI/2;
- const rx=outer?8.5:4.65,ry=outer?4.15:2.23;const origin=new THREE.Vector3(Math.cos(angle)*rx,Math.sin(angle)*ry,outer?-.6:-2.2);
- const group=new THREE.Group();group.position.copy(origin);group.rotation.z= -Math.cos(angle)*.09;
- const geo=new THREE.BoxGeometry(1.6,2.44,.07);
+ const rx=outer?8.05:4.3,ry=outer?3.85:2.10;const depth=Math.cos(angle)*2.5+Math.sin(angle)*.65;const origin=new THREE.Vector3(Math.cos(angle)*rx,Math.sin(angle)*ry,outer?depth:-2.0+depth*.6);
+ const group=new THREE.Group();group.position.copy(origin);group.rotation.z= -Math.cos(angle)*.10;group.rotation.y=-Math.cos(angle)*.32;group.rotation.x=Math.sin(angle)*.13;
+ const geo=new THREE.BoxGeometry(1.65,2.52,.22);
  const front=new THREE.CanvasTexture(face(year));front.colorSpace=THREE.SRGBColorSpace;front.anisotropy=renderer.capabilities.getMaxAnisotropy();
  const back=new THREE.CanvasTexture(face(year,true));back.colorSpace=THREE.SRGBColorSpace;
- const edge=new THREE.MeshStandardMaterial({color:0xc2a77f,metalness:.45,roughness:.36});
- const mesh=new THREE.Mesh(geo,[edge,edge,edge,edge,new THREE.MeshBasicMaterial({map:front}),new THREE.MeshBasicMaterial({map:back})]);
+ const edge=new THREE.MeshStandardMaterial({color:0xb49a73,metalness:.72,roughness:.25});
+ const mesh=new THREE.Mesh(geo,[edge,edge,edge,edge,new THREE.MeshStandardMaterial({map:front,metalness:0,roughness:.78}),new THREE.MeshStandardMaterial({map:back,metalness:0,roughness:.78})]);
  // BoxGeometry face index 4 is +Z, index 5 is -Z.
- group.add(mesh);cardGroup.add(group);const item={year,group,mesh,origin,angle,outer};mesh.userData.item=item;cards.push(item);group.scale.setScalar(.01);
+ group.add(mesh);cardGroup.add(group);const item={year,group,mesh,origin,angle,outer,restRotation:group.rotation.clone()};mesh.userData.item=item;cards.push(item);group.scale.setScalar(.01);
  if(!reduced)gsap.to(group.scale,{x:1,y:1,z:1,duration:1.25,delay:i*.035,ease:'back.out(1.6)'});else group.scale.setScalar(1);
  });
 }
@@ -72,7 +72,7 @@ function openBlueprint(year){modalOpen=true;$('modalYear').textContent=year;cons
  gsap.fromTo('#board',{scale:.68,opacity:0,rotateX:-12},{scale:1,opacity:1,rotateX:0,duration:reduced?0:.85,ease:'power3.out'});
 }
 function showProject(name,seed){const d=$('detail');d.replaceChildren();const img=document.createElement('img');img.src=dataURL(seed);img.alt='建築概念示意圖';const h=document.createElement('h3');h.textContent=name;const p=document.createElement('p');p.textContent='建築作品資訊展示區。正式版將替換成得邑提供的建案實景照片、設計理念及完整介紹。';d.append(img,h,p);d.classList.add('open');d.scrollIntoView({behavior:reduced?'instant':'smooth',block:'nearest'})}
-function closeBlueprint(){if(!modalOpen)return;modalOpen=false;$('modal').classList.remove('open');document.body.style.overflow='';if(active){gsap.to(active.group.position,{x:active.origin.x,y:active.origin.y,z:active.origin.z,duration:reduced?0:.8,ease:'power3.inOut'});gsap.to(active.group.rotation,{y:0,z:-Math.cos(active.angle)*.09,duration:reduced?0:.8});gsap.to(cards.map(c=>c.group.scale),{x:1,y:1,z:1,duration:reduced?0:.6});active=null}}
+function closeBlueprint(){if(!modalOpen)return;modalOpen=false;$('modal').classList.remove('open');document.body.style.overflow='';if(active){gsap.to(active.group.position,{x:active.origin.x,y:active.origin.y,z:active.origin.z,duration:reduced?0:.8,ease:'power3.inOut'});gsap.to(active.group.rotation,{x:active.restRotation.x,y:active.restRotation.y,z:active.restRotation.z,duration:reduced?0:.8});gsap.to(cards.map(c=>c.group.scale),{x:1,y:1,z:1,duration:reduced?0:.6});active=null}}
 $('closeModal').addEventListener('click',closeBlueprint);
 $('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeBlueprint()});
 years.forEach(y=>{const b=document.createElement('button');b.className='year-btn';const img=document.createElement('img');img.src=dataURL(y);img.alt='';const strong=document.createElement('b');strong.textContent=y;b.append(img,strong);b.addEventListener('click',()=>{closeIndex();if(modalOpen)closeBlueprint();setTimeout(()=>showYear(y),reduced?0:900)});$('years').append(b)});
@@ -84,11 +84,11 @@ let mouseX=0,mouseY=0;function locate(e){const r=renderer.domElement.getBounding
 renderer.domElement.addEventListener('pointermove',locate);
 renderer.domElement.addEventListener('pointerleave',()=>{pointer.set(20,20);hovered=null});
 renderer.domElement.addEventListener('click',e=>{locate(e);if(busy||modalOpen||$('yearIndex').classList.contains('open'))return;raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(cards.map(c=>c.mesh));if(hits.length)showYear(hits[0].object.userData.item.year)});
-function resize(){const w=innerWidth,h=innerHeight;camera.aspect=w/h;camera.position.z=w<850?33:26;camera.fov=w<850?53:40;camera.updateProjectionMatrix();renderer.setSize(w,h)}
+function resize(){const w=innerWidth,h=innerHeight;camera.aspect=w/h;camera.position.z=w<850?36:27;camera.fov=w<850?53:44;camera.updateProjectionMatrix();renderer.setSize(w,h)}
 addEventListener('resize',resize);resize();
 const clock=new THREE.Clock();
 function frame(){const t=clock.getElapsedTime();if(!modalOpen&&!busy){raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(cards.map(c=>c.mesh));const hit=hits[0]?.object.userData.item;document.body.style.cursor=hit?'pointer':'default';hovered=hit||null}
- cards.forEach((c,i)=>{if(c===active)return;const target=c===hovered?1.13:1;const v=c.group.scale.x+(target-c.group.scale.x)*.085;if(!gsap.isTweening(c.group.scale))c.group.scale.setScalar(v);if(!gsap.isTweening(c.group.position)){c.group.position.z=c.origin.z+(c===hovered?.65:0)+Math.sin(t*.55+i*.6)*.045}});
+ cards.forEach((c,i)=>{if(c===active)return;const target=c===hovered?1.18:1;const v=c.group.scale.x+(target-c.group.scale.x)*.085;if(!gsap.isTweening(c.group.scale))c.group.scale.setScalar(v);if(!gsap.isTweening(c.group.position)){c.group.position.z=c.origin.z+(c===hovered?1.15:0)+Math.sin(t*.55+i*.6)*.10}});
  if(!reduced){camera.position.x+=(mouseX*.18-camera.position.x)*.018;camera.position.y+=(-mouseY*.12-camera.position.y)*.018}
  camera.lookAt(0,0,0);renderer.render(scene,camera)}
 renderer.setAnimationLoop(frame);
