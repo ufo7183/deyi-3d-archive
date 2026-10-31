@@ -13,15 +13,16 @@
 <div class="ui" id="mainUI">
 <header class="header"><div><div class="brand">得邑 <span style="font-weight:300;color:#a98d60">｜</span> 上．經典</div><div class="eyebrow">DE-YI ARCHITECTURAL ARCHIVE</div></div><div class="topright">THE ARCHITECTURAL ARCANA<br>2002 — 2023</div></header>
 <section class="intro"><div class="en">A COLLECTION OF TIME & SPACE</div><h1>築時之環</h1><p>二十二載建築時光，化作環繞的典藏卡牌。<br>點選一個年份，開啟一段建築故事。</p></section>
-<footer class="bottom"><div class="hint">◌ &nbsp;左右拖曳牌陣，點選年份抽牌<br><span style="opacity:.65">SELECT A YEAR TO EXPLORE</span></div><button class="outline" id="openIndex">全部年份　↗</button></footer>
+<footer class="bottom"><div class="hint">◌ &nbsp;拖曳轉動 3D 星環 · 點選年份抽牌<br><span style="opacity:.65">SELECT A YEAR TO EXPLORE</span></div><button class="outline" id="openIndex">全部年份　↗</button></footer>
 </div>
-<section id="yearIndex" role="dialog" aria-label="全部年份" aria-modal="true"><div class="index-head"><h2>建築年份典藏</h2><button id="closeIndex" class="outline">關閉 ×</button></div><p style="color:#877866;font-size:13px;margin-bottom:25px">選擇年份，打開建築藍圖</p><div class="years" id="years"></div><p class="credit">此版本為互動原型，卡面為程式生成的建築意象，非得邑實際建案照片。</p></section>
-<div class="modal" id="modal" role="dialog" aria-label="年度建築藍圖" aria-modal="true"><div class="board" id="board"><div class="board-top"><div><small>ARCHITECTURAL BLUEPRINT / DE-YI</small><h2 id="modalYear">2023</h2><small>時光典藏 · 年度建築作品</small></div><button id="closeModal" class="outline">返回星環　×</button></div><div class="project-grid" id="projectGrid"></div><div class="detail" id="detail"></div><p class="credit">展示用建築插畫為原型素材，尚未替換為業主授權的真實建案圖像與文案。</p></div></div>
+<section id="yearIndex" role="dialog" aria-label="全部年份" aria-modal="true"><div class="index-head"><h2>建築年份典藏</h2><button id="closeIndex" class="outline">關閉 ×</button></div><p style="color:#877866;font-size:13px;margin-bottom:25px">選擇年份，打開建築藍圖</p><div class="years" id="years"></div><p class="credit">此版本為互動原型；年份與部分建案名稱依得邑官網，牌面照片尚未換成原站實景。</p></section>
+<div class="modal" id="modal" role="dialog" aria-label="年度建築藍圖" aria-modal="true"><div class="board" id="board"><div class="board-top"><div><small>ARCHITECTURAL BLUEPRINT / DE-YI</small><h2 id="modalYear">2023</h2><small>時光典藏 · 年度建築作品</small></div><button id="closeModal" class="outline">返回星環　×</button></div><div class="project-grid" id="projectGrid"></div><div class="detail" id="detail"></div><p class="credit">年份與已核對之作品名稱依得邑官網；建築圖片目前仍是原型示意，請以官網實景照片為準。</p></div></div>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 import { gsap } from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/+esm';
 const years=Array.from({length:22},(_,i)=>2023-i);
-const known={2023:['等露','尋常院','借墨','掬茶金'],2021:['一院久樹','山茶花森','花曆河','日光耶加']};
+const known={2023:['等露','尋常院','借墨','掬茶金'],2022:['海洋恰恰','知一二','金宴'],2021:['一院九樹','山茶花森','花曆河','日光耶加'],2018:['白鹿山丘','18富','大藏'],2017:['和簷．悅舍','河日子','得邑萬市興'],2016:['里山六帖','早稻墅','得邑希真'],2015:['得邑倫敦大道','得邑巨商','墨問'],2014:['得邑．羅森堡','得邑捷市堡','得邑大道東','得邑道後'],2013:['得邑愛丁堡Ⅱ','得邑獅子堡','得邑香波堡Ⅱ','得邑佩納堡'],2009:['寬御','河堤大樂 No. 12','青年巨商No.13','青年巨商No.15']};
+const officialYear=year=>'https://www.de-yi.com.tw/'+year+'.htm';
 const $=id=>document.getElementById(id);
 let active=null,busy=false,selected=null,hovered=null,modalOpen=false;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -44,12 +45,18 @@ const camera=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,.1,100);camer
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.outputColorSpace=THREE.SRGBColorSpace;$('stage').appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xffffff,0xbea785,3));const sunlight=new THREE.DirectionalLight(0xfff5da,3);sunlight.position.set(-8,10,14);scene.add(sunlight);
 const ambientGroup=new THREE.Group();scene.add(ambientGroup);
-for(const row of [0,1]){const line=[];for(let i=0;i<=100;i++){const u=i/50-1;line.push(new THREE.Vector3(u*(row?5.2:7.0),(row?1.8:-1.3)+Math.pow(Math.abs(u),1.7)*(row?1.65:2.5), (row?-1.15:1.3)-Math.abs(u)*1.85-.1))}ambientGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(line),new THREE.LineBasicMaterial({color:0xb69c74,transparent:true,opacity:.3})))}
+// True 3D orbital trajectories in tilted planes, not a 2D fan.
+for(const [rad,tilt,yOffset] of [[7.2,.28,.1],[4.8,-.24,.25]]) {
+ const pts=[];for(let q=0;q<=200;q++){const a=q/200*Math.PI*2;pts.push(new THREE.Vector3(Math.sin(a)*rad,Math.cos(a)*rad*.59+yOffset+Math.sin(a)*tilt*2,Math.cos(a)*rad*.58))}
+ const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0xb39973,transparent:true,opacity:.24}));ambientGroup.add(line);
+}
 const cards=[];const raycaster=new THREE.Raycaster();const pointer=new THREE.Vector2(20,20);const cardGroup=new THREE.Group();scene.add(cardGroup);const loader=new THREE.CanvasTexture(face(2023));loader.dispose();
 function build(){
  years.forEach((year,i)=>{const outer=i<12,n=outer?12:10,j=outer?i:i-12,angle=(j/n)*Math.PI*2-Math.PI/2;
- const spread=(i-10.5)/10.5;const row=outer?0:1;const local=outer?i:i-12;const count=outer?12:10;const curve=(local-(count-1)/2)/((count-1)/2);const origin=new THREE.Vector3(curve*(outer?6.75:5.0), (outer?-1.3:1.8)+Math.pow(Math.abs(curve),1.7)*(outer?2.5:1.65), (outer?1.3:-1.1)-Math.abs(curve)*1.85);
- const group=new THREE.Group();group.position.copy(origin);group.rotation.z=-curve*(outer?.32:.24);group.rotation.y=-curve*.43;group.rotation.x=-.13+Math.abs(curve)*.07;
+ const radius=outer?7.2:4.8;
+ const orbitAngle=angle;
+ const origin=new THREE.Vector3(Math.sin(orbitAngle)*radius,Math.cos(orbitAngle)*radius*.59+(outer?-.1:.25)+Math.sin(orbitAngle)*(outer?.56:-.48),Math.cos(orbitAngle)*radius*.58+(outer?0:-.45));
+ const group=new THREE.Group();group.position.copy(origin);group.rotation.z=-Math.sin(angle)*.16;group.rotation.y=Math.sin(angle)*.35;group.rotation.x=outer?.08:-.12;
  const geo=new THREE.BoxGeometry(1.65,2.52,.22);
  const front=new THREE.CanvasTexture(face(year));front.colorSpace=THREE.SRGBColorSpace;front.anisotropy=renderer.capabilities.getMaxAnisotropy();
  const back=new THREE.CanvasTexture(face(year,true));back.colorSpace=THREE.SRGBColorSpace;
@@ -66,12 +73,12 @@ function showYear(year){if(busy||modalOpen)return;const card=cards.find(c=>c.yea
  gsap.to(card.group.position,{x:0,y:0,z:8,duration:d,ease:'power3.inOut'});
  gsap.to(card.group.rotation,{x:0,y:Math.PI,z:0,duration:d,delay:d*.8,ease:'power3.inOut',onComplete:()=>{openBlueprint(year);busy=false}});
 }
-function openBlueprint(year){modalOpen=true;$('modalYear').textContent=year;const names=known[year]||[year+' 年代表建築'];$('projectGrid').replaceChildren();$('detail').classList.remove('open');
+function openBlueprint(year){modalOpen=true;$('modalYear').textContent=year;const names=known[year]||[];$('projectGrid').replaceChildren();$('detail').classList.remove('open');
  names.forEach((name,i)=>{const btn=document.createElement('button');btn.className='project-card';btn.style.animationDelay=(i*.10)+'s';const img=document.createElement('img');img.src=dataURL(year+i);img.alt=name+' 建築概念圖';const strong=document.createElement('strong');strong.textContent=name;const span=document.createElement('span');span.textContent='PROJECT 0'+(i+1);btn.append(img,strong,span);btn.addEventListener('click',()=>showProject(name,year+i));$('projectGrid').append(btn)});
- $('modal').classList.add('open');document.body.style.overflow='hidden';
+ const off=document.createElement('a');off.className='outline';off.href=officialYear(year);off.target='_blank';off.rel='noopener noreferrer';off.textContent='查看得邑官網 '+year+' 年完整作品 ↗';off.style.display='inline-block';off.style.marginBottom='16px';$('projectGrid').append(off);$('modal').classList.add('open');document.body.style.overflow='hidden';
  gsap.fromTo('#board',{scale:.68,opacity:0,rotateX:-12},{scale:1,opacity:1,rotateX:0,duration:reduced?0:.85,ease:'power3.out'});
 }
-function showProject(name,seed){const d=$('detail');d.replaceChildren();const img=document.createElement('img');img.src=dataURL(seed);img.alt='建築概念示意圖';const h=document.createElement('h3');h.textContent=name;const p=document.createElement('p');p.textContent='建築作品資訊展示區。正式版將替換成得邑提供的建案實景照片、設計理念及完整介紹。';d.append(img,h,p);d.classList.add('open');d.scrollIntoView({behavior:reduced?'instant':'smooth',block:'nearest'})}
+function showProject(name,seed){const d=$('detail');d.replaceChildren();const img=document.createElement('img');img.src=dataURL(seed);img.alt='建築概念示意圖';const h=document.createElement('h3');h.textContent=name;const p=document.createElement('p');p.textContent='此為建築影像佔位圖。實際作品圖文請點年度官網連結查看，正式版須以原站照片及文案替換。';d.append(img,h,p);d.classList.add('open');d.scrollIntoView({behavior:reduced?'instant':'smooth',block:'nearest'})}
 function closeBlueprint(){if(!modalOpen)return;modalOpen=false;$('modal').classList.remove('open');document.body.style.overflow='';if(active){gsap.to(active.group.position,{x:active.origin.x,y:active.origin.y,z:active.origin.z,duration:reduced?0:.8,ease:'power3.inOut'});gsap.to(active.group.rotation,{x:active.restRotation.x,y:active.restRotation.y,z:active.restRotation.z,duration:reduced?0:.8});gsap.to(cards.map(c=>c.group.scale),{x:1,y:1,z:1,duration:reduced?0:.6});active=null}}
 $('closeModal').addEventListener('click',closeBlueprint);
 $('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeBlueprint()});
@@ -80,16 +87,16 @@ function openIndex(){$('yearIndex').classList.add('open');$('closeIndex').focus(
 function closeIndex(){$('yearIndex').classList.remove('open');$('openIndex').focus()}
 $('openIndex').onclick=openIndex;$('closeIndex').onclick=closeIndex;
 addEventListener('keydown',e=>{if(e.key==='Escape'){if($('yearIndex').classList.contains('open'))closeIndex();else closeBlueprint()}});
-let mouseX=0,mouseY=0;let dragStart=null;let dragMoved=false;let orbitOffset=0;function locate(e){const r=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-r.left)/r.width)*2-1;pointer.y=-((e.clientY-r.top)/r.height)*2+1;mouseX=pointer.x;mouseY=pointer.y}
-renderer.domElement.addEventListener('pointermove',e=>{locate(e);if(dragStart&&!modalOpen){const dx=e.clientX-dragStart.x;if(Math.abs(dx)>6)dragMoved=true;orbitOffset=Math.max(-2.2,Math.min(2.2,dragStart.offset+dx/230));}});renderer.domElement.addEventListener('pointerdown',e=>{dragStart={x:e.clientX,offset:orbitOffset};dragMoved=false});window.addEventListener('pointerup',()=>{setTimeout(()=>{dragStart=null},0)});
+let mouseX=0,mouseY=0;let dragStart=null;let dragMoved=false;let orbitOffset=0;let lastInput=performance.now();function locate(e){const r=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-r.left)/r.width)*2-1;pointer.y=-((e.clientY-r.top)/r.height)*2+1;mouseX=pointer.x;mouseY=pointer.y}
+renderer.domElement.addEventListener('pointermove',e=>{locate(e);if(dragStart&&!modalOpen){const dx=e.clientX-dragStart.x;if(Math.abs(dx)>6)dragMoved=true;orbitOffset=dragStart.offset+dx/220;lastInput=performance.now();}});renderer.domElement.addEventListener('pointerdown',e=>{dragStart={x:e.clientX,offset:orbitOffset};dragMoved=false});window.addEventListener('pointerup',()=>{setTimeout(()=>{dragStart=null},0)});
 renderer.domElement.addEventListener('pointerleave',()=>{pointer.set(20,20);hovered=null});
-renderer.domElement.addEventListener('click',e=>{locate(e);if(busy||modalOpen||dragMoved||$('yearIndex').classList.contains('open'))return;raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(cards.map(c=>c.mesh));if(hits.length)showYear(hits[0].object.userData.item.year)});
-function resize(){const w=innerWidth,h=innerHeight;camera.aspect=w/h;camera.position.z=w<850?36:27;camera.fov=w<850?53:44;camera.updateProjectionMatrix();renderer.setSize(w,h)}
+renderer.domElement.addEventListener('wheel',e=>{if(modalOpen)return;orbitOffset+=Math.sign(e.deltaY)*.16;lastInput=performance.now()},{passive:true});renderer.domElement.addEventListener('click',e=>{locate(e);if(busy||modalOpen||dragMoved||$('yearIndex').classList.contains('open'))return;raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(cards.map(c=>c.mesh));if(hits.length)showYear(hits[0].object.userData.item.year)});
+function resize(){const w=innerWidth,h=innerHeight;camera.aspect=w/h;camera.position.z=w<850?35:29;camera.fov=w<850?55:46;camera.updateProjectionMatrix();renderer.setSize(w,h)}
 addEventListener('resize',resize);resize();
 const clock=new THREE.Clock();
 function frame(){const t=clock.getElapsedTime();if(!modalOpen&&!busy){raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(cards.map(c=>c.mesh));const hit=hits[0]?.object.userData.item;document.body.style.cursor=hit?'pointer':'default';hovered=hit||null}
- cards.forEach((c,i)=>{if(c===active)return;const target=c===hovered?1.18:1;const v=c.group.scale.x+(target-c.group.scale.x)*.085;if(!gsap.isTweening(c.group.scale))c.group.scale.setScalar(v);if(!gsap.isTweening(c.group.position)){c.group.position.z=c.origin.z+(c===hovered?1.15:0)+Math.sin(t*.55+i*.6)*.10}});
- if(!reduced){cardGroup.rotation.y+=(orbitOffset-cardGroup.rotation.y)*.045;camera.position.x+=(mouseX*.18-camera.position.x)*.018;camera.position.y+=(-mouseY*.12-camera.position.y)*.018}
+ if(!active&&!dragStart&&performance.now()-lastInput>3000&&!reduced)orbitOffset+=.0012;cards.forEach((c,i)=>{if(c===active)return;const target=c===hovered?1.18:1;const v=c.group.scale.x+(target-c.group.scale.x)*.085;if(!gsap.isTweening(c.group.scale))c.group.scale.setScalar(v);if(!gsap.isTweening(c.group.position)){c.group.position.z=c.origin.z+(c===hovered?1.15:0)+Math.sin(t*.55+i*.6)*.10}});
+ if(!reduced){cardGroup.rotation.y+=(orbitOffset-cardGroup.rotation.y)*.055;cardGroup.rotation.x+=(Math.sin(orbitOffset*.5)*.09-cardGroup.rotation.x)*.02;camera.position.x+=(mouseX*.18-camera.position.x)*.018;camera.position.y+=(-mouseY*.12-camera.position.y)*.018}
  camera.lookAt(0,0,0);renderer.render(scene,camera)}
 renderer.setAnimationLoop(frame);
 </script>
