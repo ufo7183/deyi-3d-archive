@@ -1,12 +1,34 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#03050a"><title>得邑建設｜上．經典 · 築時之環</title><link rel="stylesheet" href="./styles.css?v=20261101d-visual-carousel"></head><body>
-<div class="environment"><div class="stars"></div><div class="arch one"></div><div class="arch two"></div><div class="arch three"></div><div class="floor"></div></div>
-<div id="scene" aria-label="22 張懸浮建築年份卡，左右拖曳旋轉"></div>
-<main class="ui"><div class="brand">得邑｜上．經典<span>DE-YI ARCHITECTURAL ARCHIVE</span></div>
-<div class="hero"><div class="kicker">THE ARCHITECTURAL CAROUSEL</div><h1>Choose a Year</h1><p>每一張卡牌，都珍藏一段建築時光</p>
-<div class="focus"><button id="prev" class="arrow" aria-label="上一年">‹</button><div class="focus-info"><small>IN FOCUS</small><strong id="focus-year">2023</strong><span id="focus-desc">等露 · 尋常院 · 借墨 · 掬茶金</span></div><button id="next" class="arrow" aria-label="下一年">›</button></div>
-<div class="actions"><button class="pill" id="shuffle">隨機年份</button><button class="pill" id="explore"><span id="open-label">探索 2023 年</span> ↗</button></div></div>
-<div class="bottom">拖曳轉動卡牌 · 點擊中央卡片探索作品<br>2002 — 2023 / 22 YEARS · VISUAL V4</div>
-<button class="pill index-btn" id="all-years">全部年份</button></main>
-<section class="overlay" id="index" role="dialog" aria-label="全部年份"><div class="panel"><div class="panel-head"><div><small>DE-YI CLASSIC WORKS</small><h2>All Years</h2></div><button class="pill" id="close-index">關閉 ×</button></div><p>快速選擇年份，卡牌將轉到中央。</p><div class="years" id="year-grid"></div></div></section>
-<section class="overlay" id="detail" role="dialog" aria-label="年度經典作品"><div class="panel"><div class="panel-head"><div><small>ARCHITECTURAL BLUEPRINT / DE-YI</small><h2 id="detail-year">2023</h2></div><button class="pill" id="close-detail">返回牌環 ×</button></div><p>建築設計圖・年度典藏。卡牌圖像為設計示意，實際建案照片與詳細文字以得邑官網為準。</p><div class="grid" id="projects"></div><a class="official" id="official" href="https://www.de-yi.com.tw/classic.htm" target="_blank" rel="noopener noreferrer">前往得邑官網查看作品 ↗</a></div></section>
-<script type="module" src="./app.js?v=20261101d-visual-carousel"></script></body></html>
+<!doctype html>
+<html lang="zh-Hant"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f8f5ed"><meta name="description" content="得邑建設・上．經典，2002–2023 年建築典藏互動展覽。">
+<title>得邑｜上．經典 — 建築典藏畫廊</title>
+<link rel="stylesheet" href="./styles.css?v=editorial-20261101-01">
+</head><body>
+<div class="environment" aria-hidden="true"><div class="leaves"></div><div class="halo"></div><div class="floor"></div></div>
+<div id="scene" aria-label="得邑 22 年的立體建築雜誌封面，左右拖曳或按箭頭切換"></div>
+<main class="ui">
+<header class="hero">
+<div class="eyebrow">D E Y I &nbsp; C O L L E C T I O N</div>
+<h1>得邑｜上・經典</h1>
+<p class="tagline">穿越時光，見證得邑的經典</p>
+<nav class="focus" aria-label="選擇典藏年份">
+<button class="arrow" id="prev" aria-label="前一個年份">‹</button>
+<div class="focus-info" aria-live="polite"><small>IN FOCUS</small><strong id="focus-year">2023</strong><span id="focus-desc">等露 · 尋常院 · 借墨 · 掬茶金</span></div>
+<button class="arrow" id="next" aria-label="下一個年份">›</button>
+</nav>
+<div class="actions"><button class="pill" id="shuffle">隨機瀏覽</button><button class="pill" id="explore"><span id="open-label">探索 2023 年</span> ↗</button></div>
+</header>
+<div class="bottom">左右拖曳切換年代 · 點選中央卡片開啟作品<br>2002 — 2023 &nbsp; / &nbsp; EDITORIAL V5</div>
+<button class="pill index-btn" id="all-years">全部年份</button>
+</main>
+<section class="overlay" id="index" role="dialog" aria-label="全部典藏年份" aria-modal="true"><div class="panel">
+<div class="panel-head"><div><small>DE-YI / YEAR INDEX</small><h2>All Years</h2></div><button class="pill" id="close-index">關閉 ×</button></div>
+<p>選擇年份，立體封面將旋轉到中央。</p><div class="years" id="year-grid"></div></div></section>
+<section class="overlay" id="detail" role="dialog" aria-label="年度經典建案" aria-modal="true"><div class="panel">
+<div class="panel-head"><div><small>DE-YI ARCHITECTURAL COLLECTION</small><h2 id="detail-year">2023</h2></div><button class="pill" id="close-detail">返回畫廊 ×</button></div>
+<p>得邑建設年度經典作品。封面建築圖為概念插畫，建案照片與完整文案請以得邑官網為準。</p>
+<div class="grid" id="projects"></div>
+<a class="official" id="official" href="https://www.de-yi.com.tw/classic.htm" target="_blank" rel="noopener noreferrer">查看得邑官網該年度作品 ↗</a>
+</div></section>
+<script type="module" src="./app.js?v=editorial-20261101-01"></script></body></html>
