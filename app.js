@@ -18,8 +18,8 @@ const $=sel=>document.querySelector(sel);
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(38,innerWidth/innerHeight,.1,140);
-camera.position.set(0,5,34);
-camera.lookAt(0,-1.7,0);
+camera.position.set(0,6.2,34);
+camera.lookAt(0,-0.8,0);
 const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'high-performance'});
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.65));
 renderer.setSize(innerWidth,innerHeight);
@@ -29,7 +29,7 @@ $('#scene').appendChild(renderer.domElement);
 scene.add(new THREE.AmbientLight(0xffffff,2.3));
 const key=new THREE.DirectionalLight(0xffefd2,3.2);key.position.set(-6,12,16);scene.add(key);
 const rim=new THREE.DirectionalLight(0xffdca4,1.15);rim.position.set(8,4,-5);scene.add(rim);
-const stage=new THREE.Group();scene.add(stage);
+const stage=new THREE.Group();stage.rotation.x=-0.18;scene.add(stage);
 const goldEdge=new THREE.MeshStandardMaterial({color:0xd3b57b,metalness:.45,roughness:.28});
 const cardShape=new THREE.BoxGeometry(3.15,4.65,.19);
 const C=years.length;
@@ -139,7 +139,7 @@ function layout(c,off,time,force=false){
  const p=c.group.position,e=force?1:.13;
  p.x+=(targetX-p.x)*e;p.y+=(targetY-p.y)*e;p.z+=(targetZ-p.z)*e;
  c.group.rotation.y+=(side*Math.min(.82,n*.14)-c.group.rotation.y)*e;
- c.group.rotation.x+=(Math.min(n*.033,.26)-c.group.rotation.x)*e;
+ c.group.rotation.x+=(-Math.min(n*.025,.18)-c.group.rotation.x)*e;
  c.group.rotation.z+=(-side*Math.min(.13,n*.019)-c.group.rotation.z)*e;
  const scale=c.group.scale.x+(desired-c.group.scale.x)*(force?1:.13);c.group.scale.setScalar(scale);
 }
@@ -191,8 +191,8 @@ $('#detail').addEventListener('click',e=>{if(e.target.id==='detail')closeYear()}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('#index').classList.remove('open');if(locked)closeYear()}if(!locked&&e.key==='ArrowLeft')move(-1);if(!locked&&e.key==='ArrowRight')move(1)});
 function resize(){
  const isMobile=innerWidth<700;
- camera.aspect=innerWidth/innerHeight;camera.position.set(0,isMobile?6.8:5,isMobile?43:34);
- camera.fov=isMobile?45:38;camera.lookAt(0,-1.7,0);camera.updateProjectionMatrix();
+ camera.aspect=innerWidth/innerHeight;camera.position.set(0,isMobile?7.6:6.2,isMobile?43:34);
+ camera.fov=isMobile?45:38;camera.lookAt(0,-0.8,0);camera.updateProjectionMatrix();
  stage.scale.setScalar(isMobile?.78:1);
  renderer.setSize(innerWidth,innerHeight);
 }
