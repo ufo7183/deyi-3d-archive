@@ -135,7 +135,7 @@ async function loadOfficialGallery(){
   for(const c of cards){const item=data[c.year];if(!item?.cover)continue;
    const photo=new Image();photo.onload=()=>{const texture=c.mesh.material[4].map;texture.image=cover(c.year,photo);texture.needsUpdate=true};
    photo.onerror=()=>console.warn('Unable to load original DE-YI photo',c.year);
-   photo.src='./'+item.cover.replace(/^\\/?/, '');
+   photo.src='./'+item.cover.replace(/^\/+/, '');
   }
  }catch(err){console.info('Original photos not yet imported; retaining illustrated covers',err)}
 }
