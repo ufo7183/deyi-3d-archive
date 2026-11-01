@@ -119,11 +119,12 @@ years.forEach((year,i)=>{
  group.add(mesh);stage.add(group);cards.push({year,index:i,group,mesh});mesh.userData.index=i;group.scale.setScalar(.01);
 });
 document.fonts?.ready.then(()=>{cards.forEach(c=>{const t=c.mesh.material[4].map;t.image=cover(c.year);t.needsUpdate=true})});
+// A single forward-tilted, bowl-shaped loop. The rear semicircle rises above the front cards.
 const track={
- x:[0,5.55,9.85,13.0,15.7,17.8,19.2,20.4,21.5],
- z:[13.6,11.5,8.7,5.8,3,0,-2.7,-5,-7],
- y:[-1.0,-1.22,-1.15,-.9,-.2,.35,.9,1.45,1.85],
- size:[1.79,1.22,.94,.75,.6,.49,.4,.33,.26]
+ x:[0,5.55,10.45,14.4,17.6,18.3,15.4,12.5,9,5.7,2.8,0],
+ z:[13.6,11.5,8.7,5.8,3,0,-2.6,-5,-7.5,-9.5,-11,-12],
+ y:[-1,-1.22,-1.15,-.9,-.15,.45,1.6,2,2.3,2.4,2.5,2.6],
+ size:[1.79,1.22,.94,.75,.58,.45,.4,.36,.31,.28,.26,.24]
 };
 const steps=track.x.length-1;
 let cursor=0,target=0,dragging=false,dragged=false,dragOrigin=0,dragCursor=0,locked=false,active=null;
@@ -138,6 +139,7 @@ function layout(c,off,time,force=false){
  const p=c.group.position,e=force?1:.13;
  p.x+=(targetX-p.x)*e;p.y+=(targetY-p.y)*e;p.z+=(targetZ-p.z)*e;
  c.group.rotation.y+=(side*Math.min(.82,n*.14)-c.group.rotation.y)*e;
+ c.group.rotation.x+=(Math.min(n*.033,.26)-c.group.rotation.x)*e;
  c.group.rotation.z+=(-side*Math.min(.13,n*.019)-c.group.rotation.z)*e;
  const scale=c.group.scale.x+(desired-c.group.scale.x)*(force?1:.13);c.group.scale.setScalar(scale);
 }
