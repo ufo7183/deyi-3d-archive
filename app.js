@@ -3,18 +3,11 @@ import {gsap} from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/+esm';
 
 const years=Array.from({length:22},(_,i)=>2023-i);
 let officialManifest={};
-const works={
-  2023:['等露','尋常院','借墨','掬茶金'],
-  2022:['海洋恰恰','知一二','金宴'],
-  2021:['一院九樹','山茶花森','花曆河','日光耶加'],
-  2018:['白鹿山丘','18富','大藏'],
-  2017:['和簷．悅舍','河日子','得邑萬市興'],
-  2016:['里山六帖','早稻墅','得邑希真'],
-  2015:['得邑倫敦大道','得邑巨商','墨問'],
-  2014:['得邑．羅森堡','得邑捷市堡','得邑大道東','得邑道後'],
-  2013:['得邑愛丁堡Ⅱ','得邑獅子堡','得邑香波堡Ⅱ','得邑佩納堡'],
-  2009:['寬御','河堤大樂 No. 12','青年巨商No.13','青年巨商No.15']
-};
+function getProjectNames(year){
+ const entry=officialManifest[year];
+ if(entry?.projects?.length)return entry.projects.map(p=>p.name);
+ return[];
+}
 const $=sel=>document.querySelector(sel);
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const scene=new THREE.Scene();
@@ -81,7 +74,7 @@ function cover(year,realPhoto=null){
  g.fillStyle='#766349';g.font='500 13px Georgia';g.textAlign='right';g.fillText('DEYI',580,65);g.fillText('ARCHITECTURE',580,84);g.fillText('COLLECTION',580,103);
  g.textAlign='left';g.fillStyle='#b58b4c';g.font='500 93px Georgia';g.fillText(String(year),57,129);
  g.fillStyle='#4d4235';g.font='500 28px "Noto Serif TC",serif';
- const title=works[year]?.[0]||'年度建築典藏';g.fillText(title,58,189,495);
+ const title=getProjectNames(year)[0]||'年度建築典藏';g.fillText(title,58,189,495);
  g.strokeStyle='#bfa371';g.lineWidth=2;g.beginPath();g.moveTo(58,207);g.lineTo(578,207);g.stroke();
  g.save();g.beginPath();g.rect(35,226,570,630);g.clip();
  const skies=[['#c8dcef','#fef6e7'],['#b4d4dd','#fff2df'],['#d8dfdc','#fff6e7'],['#c4dce4','#fff6ed']];
@@ -164,7 +157,7 @@ function layout(c,off,time,force=false){
  c.group.rotation.z+=(-side*Math.min(.13,n*.019)-c.group.rotation.z)*e;
  const scale=c.group.scale.x+(desired-c.group.scale.x)*(force?1:.13);c.group.scale.setScalar(scale);
 }
-function label(){const idx=mod(Math.round(target)),year=years[idx];$('#focus-year').textContent=year;$('#focus-desc').textContent=(works[year]||[]).join(' · ')||'經典作品典藏';$('#open-label').textContent='探索 '+year+' 年'}
+function label(){const idx=mod(Math.round(target)),year=years[idx];$('#focus-year').textContent=year;const names=getProjectNames(year);$('#focus-desc').textContent=names.join(' · ')||'經典作品典藏';$('#open-label').textContent='探索 '+year+' 年'}
 function select(index){if(locked)return;const nearest=Math.round(target);const i=mod(index);const adjustment=wrapped(i-mod(nearest));target=nearest+adjustment;label()}
 function move(n){select(mod(Math.round(target)+n))}
 const view=$('#scene');
