@@ -30,9 +30,9 @@ session=requests.Session();session.headers.update(UA)
 manifest={}
 for year in YEARS:
  page=None
- for base in ['https://www.de-yi.com.tw/','http://www.de-yi.com.tw/','https://de-yi.com.tw/']:
+ for base in ['https://www.de-yi.com.tw/','http://www.de-yi.com.tw/']:
   try:
-   res=session.get(base+str(year)+'.htm',timeout=22)
+   res=session.get(base+str(year)+'.htm',timeout=9)
    if res.ok and len(res.content)>1500:
     page=res;break
   except requests.RequestException as exc:
@@ -55,9 +55,9 @@ for year in YEARS:
  saved=[]
  folder=DEST/str(year);folder.mkdir(exist_ok=True)
  for idx,url in enumerate(imgs):
-  if len(saved)>=12:break
+  if len(saved)>=8:break
   try:
-   res=session.get(url,timeout=20,headers={'Referer':page.url})
+   res=session.get(url,timeout=12,headers={'Referer':page.url})
    res.raise_for_status()
    if len(res.content)>8_000_000:continue
    im=Image.open(io.BytesIO(res.content))
