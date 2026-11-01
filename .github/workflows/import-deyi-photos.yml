@@ -1,9 +1,5 @@
 name: Import official DE-YI photos
 on:
-  push:
-    paths:
-      - 'scripts/import_official_photos.py'
-      - '.github/workflows/import-deyi-photos.yml'
   workflow_dispatch:
 permissions:
   contents: write
@@ -19,6 +15,14 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install requests beautifulsoup4 pillow
+      - name: Check for existing curated data
+        run: |
+          if [ -s assets/official/manifest.json ] && [ "$(cat assets/official/manifest.json)" != "{}" ]; then
+            echo "WARNING: manifest.json already contains curated data."
+            echo "Running import will overwrite manually verified project-photo mappings."
+            echo "To proceed, remove this check or clear manifest.json first."
+            exit 1
+          fi
       - name: Download official site photos
         run: python scripts/import_official_photos.py
       - name: Commit original photos and manifest
