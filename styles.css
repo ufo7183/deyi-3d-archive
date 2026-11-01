@@ -36,3 +36,8 @@ button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:
 @media(max-width:850px){.hero{padding-top:19px}.hero h1{font-size:39px;letter-spacing:.09em}.tagline{font-size:12px;margin-bottom:12px}.focus-info{min-width:210px;padding:9px 11px}.focus-info strong{font-size:25px}.bottom{bottom:76px}.index-btn{bottom:18px}.grid{grid-template-columns:repeat(2,1fr)}.years{grid-template-columns:repeat(4,1fr)}.floor{bottom:-33vh}}
 @media(max-width:560px){.hero{padding-top:18px}.eyebrow{font-size:11px}.hero h1{font-size:32px;margin:8px 0}.tagline{font-size:10px;letter-spacing:.15em}.arrow{width:37px;height:37px}.focus{gap:7px}.focus-info{min-width:183px;max-width:61vw}.focus-info span{font-size:9px}.actions{margin-top:7px}.pill{padding:9px 13px;font-size:12px}.bottom{bottom:76px;max-width:65vw}.grid{grid-template-columns:1fr}.leaves{width:260px;height:220px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* Original DE-YI architectural photographs, displayed with clear source context. */
+.photo-entry{margin:0;border:1px solid #decbaa;background:#fff;padding:7px;min-width:0}
+.photo-entry img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover}
+.photo-entry figcaption{font:500 10px Georgia,serif;letter-spacing:.12em;color:#997849;padding:9px 4px 4px}
+.gallery-heading{grid-column:1/-1;font-size:12px!important;letter-spacing:.06em;padding-top:10px;border-top:1px solid #e3d6c2}
