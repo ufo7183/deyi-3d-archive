@@ -120,11 +120,13 @@ years.forEach((year,i)=>{
  const mesh=new THREE.Mesh(cardShape,[goldEdge,goldEdge,goldEdge,goldEdge,new THREE.MeshStandardMaterial({map:tex,metalness:0,roughness:.8}),new THREE.MeshStandardMaterial({map:backTex,metalness:0,roughness:.8})]);
  group.add(mesh);stage.add(group);cards.push({year,index:i,group,mesh});mesh.userData.index=i;group.scale.setScalar(.01);
 });
-document.fonts?.ready.then(()=>{cards.forEach(c=>{const t=c.mesh.material[4].map;if(!officialManifest[c.year]){t.image=cover(c.year);t.needsUpdate=true}})});
+function refreshCardTextures(){cards.forEach(c=>{const t=c.mesh.material[4].map;t.image=cover(c.year);t.needsUpdate=true})}
+document.fonts?.ready.then(refreshCardTextures);
 async function loadOfficialGallery(){
  try{
   const res=await fetch('./assets/official/manifest.json',{cache:'no-store'});if(!res.ok)return;
   const data=await res.json();officialManifest=data;
+  refreshCardTextures();label();
   for(const c of cards){const item=data[c.year];if(!item?.cover)continue;
    const photo=new Image();photo.onload=()=>{const texture=c.mesh.material[4].map;texture.image=cover(c.year,photo);texture.needsUpdate=true};
    photo.onerror=()=>console.warn('Unable to load original DE-YI photo',c.year);
@@ -188,12 +190,29 @@ function openYear(){
 }
 function showYear(year){
  $('#detail-year').textContent=year;$('#projects').replaceChildren();
- const list=works[year]||[];
- if(list.length){list.forEach(title=>{const box=document.createElement('article');box.className='project';const strong=document.createElement('strong');strong.textContent=title;const sub=document.createElement('span');sub.textContent='得邑建設經典作品';box.append(strong,sub);$('#projects').appendChild(box)})}
- else{const p=document.createElement('p');p.textContent='此年份尚待匯入完整作品名稱，請參考官網原始資料。';$('#projects').appendChild(p)}
- const album=officialManifest[year]?.gallery||[];
- if(album.length){const label=document.createElement('p');label.textContent='得邑官網原始作品照片（依官網素材順序顯示，未強制對應個別建案）';label.className='gallery-heading';$('#projects').appendChild(label);
- album.forEach((item,index)=>{const figure=document.createElement('figure');figure.className='photo-entry';const img=document.createElement('img');img.src='./'+item.src;img.loading='lazy';img.alt=year+' 年得邑經典作品照片 '+(index+1);const cap=document.createElement('figcaption');cap.textContent=year+' · OFFICIAL IMAGE '+String(index+1).padStart(2,'0');figure.append(img,cap);$('#projects').append(figure)})}
+ const entry=officialManifest[year];
+ const projects=entry?.projects||[];
+ const subtitle=entry?.subtitle;
+ if(subtitle){const sub=document.createElement('p');sub.className='year-subtitle';sub.textContent=subtitle;$('#projects').appendChild(sub)}
+ if(projects.length){
+  projects.forEach(proj=>{
+   const section=document.createElement('article');section.className='project';
+   const strong=document.createElement('strong');strong.textContent=proj.name;
+   section.appendChild(strong);
+   if(proj.description){const desc=document.createElement('span');desc.className='project-desc';desc.textContent=proj.description;section.appendChild(desc)}
+   if(proj.images?.length){
+    const gallery=document.createElement('div');gallery.className='project-gallery';
+    proj.images.forEach((src,i)=>{
+     const figure=document.createElement('figure');figure.className='photo-entry';
+     const img=document.createElement('img');img.src='./'+src;img.loading='lazy';img.alt=proj.name+' — 得邑建設';
+     const cap=document.createElement('figcaption');cap.textContent=proj.name;
+     figure.append(img,cap);gallery.appendChild(figure);
+    });
+    section.appendChild(gallery);
+   }
+   $('#projects').appendChild(section);
+  });
+ }else{const p=document.createElement('p');p.textContent='此年份尚待匯入完整作品名稱，請參考官網原始資料。';$('#projects').appendChild(p)}
  $('#official').href='https://www.de-yi.com.tw/'+year+'.htm';
  $('#detail').classList.add('open');$('#close-detail').focus();
 }
