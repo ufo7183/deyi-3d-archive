@@ -4,14 +4,14 @@ const years=Array.from({length:22},(_,i)=>2023-i);
 const verified={2023:['等露','尋常院','借墨','掬茶金'],2021:['一院久樹','山茶花森','花曆河','日光耶加']};
 const $=s=>document.querySelector(s);
 const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(38,innerWidth/innerHeight,.1,120);
-camera.position.set(0,0,27);
+camera.position.set(0,0,36);
 const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.65));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;
 $('#scene').append(renderer.domElement);
 scene.add(new THREE.AmbientLight(0xffe1b0,2.1));
 const light=new THREE.DirectionalLight(0xffd18a,3.1);light.position.set(-5,7,12);scene.add(light);
 const rim=new THREE.DirectionalLight(0x2a7190,1.4);rim.position.set(6,2,-9);scene.add(rim);
-const orbit=new THREE.Group();scene.add(orbit);
+const orbit=new THREE.Group();orbit.position.y=-2.2;scene.add(orbit);
 const N=years.length,R=17,angleStep=2*Math.PI/N;
 const cards=[];
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -62,7 +62,7 @@ $('#all-years').onclick=()=>$('#index').classList.add('open');$('#close-index').
 function openYear(){
  if(locked)return;locked=true;selected=cards[focus];const c=selected;
  gsap.to(orbit.rotation,{y:target,duration:.35});
- gsap.timeline({onComplete:()=>showDetail(c.year)}).to(c.group.position,{x:0,y:0,z:19.4,duration:.65,ease:'power3.inOut'}).to(c.group.rotation,{x:0,y:c.a+Math.PI,z:0,duration:.6,ease:'power2.inOut'},'<');
+ gsap.timeline({onComplete:()=>showDetail(c.year)}).to(c.group.position,{x:0,y:0,z:20.3,duration:.65,ease:'power3.inOut'}).to(c.group.rotation,{x:0,y:c.a+Math.PI,z:0,duration:.6,ease:'power2.inOut'},'<');
 }
 function showDetail(y){
  $('#detail-year').textContent=y;$('#projects').replaceChildren();
@@ -73,9 +73,9 @@ function showDetail(y){
 }
 function closeDetail(){if(!locked)return;$('#detail').classList.remove('open');const c=selected;gsap.to(c.group.position,{x:c.home.x,y:c.home.y,z:c.home.z,duration:.7,ease:'power3.inOut'});gsap.to(c.group.rotation,{x:c.base.x,y:c.base.y,z:c.base.z,duration:.7,onComplete:()=>{locked=false;selected=null}})}
 $('#close-detail').onclick=closeDetail;$('#detail').addEventListener('click',e=>{if(e.target.id==='detail')closeDetail()});document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDetail();$('#index').classList.remove('open')}if(!locked&&e.key==='ArrowLeft')select(focus-1);if(!locked&&e.key==='ArrowRight')select(focus+1)});
-function resize(){camera.aspect=innerWidth/innerHeight;camera.position.z=innerWidth<700?32:27;camera.fov=innerWidth<700?48:38;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}window.addEventListener('resize',resize);resize();
+function resize(){camera.aspect=innerWidth/innerHeight;camera.position.z=innerWidth<700?44:36;camera.fov=innerWidth<700?45:38;orbit.position.y=innerWidth<700?-3.5:-2.2;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}window.addEventListener('resize',resize);resize();
 const clock=new THREE.Clock();
 function tick(){const t=clock.getElapsedTime();if(!locked)orbit.rotation.y+=(target-orbit.rotation.y)*.08;
- cards.forEach((c,i)=>{if(c===selected)return;let front=Math.cos(c.a+orbit.rotation.y);let scale=.65+Math.max(0,front)*.48;let k=c.group.scale.x+(scale-c.group.scale.x)*.08;c.group.scale.setScalar(k);c.group.position.y=reduced?0:Math.sin(t*.6+i*.4)*.05;c.group.rotation.z=-Math.sin(c.a+orbit.rotation.y)*.07});
+ cards.forEach((c,i)=>{if(c===selected)return;let front=Math.cos(c.a+orbit.rotation.y);// Deliberately exaggerated depth falloff: one large featured card, each side card progressively smaller.\n let scale=.30+1.02*Math.pow(Math.max(0,front),3.2);let k=c.group.scale.x+(scale-c.group.scale.x)*.08;c.group.scale.setScalar(k);c.group.position.y=reduced?0:Math.sin(t*.6+i*.4)*.035;c.group.rotation.z=-Math.sin(c.a+orbit.rotation.y)*.07});
  renderer.render(scene,camera)}
 renderer.setAnimationLoop(tick);
