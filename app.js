@@ -11,7 +11,7 @@ $('#scene').append(renderer.domElement);
 scene.add(new THREE.AmbientLight(0xffe1b0,2.1));
 const light=new THREE.DirectionalLight(0xffd18a,3.1);light.position.set(-5,7,12);scene.add(light);
 const rim=new THREE.DirectionalLight(0x2a7190,1.4);rim.position.set(6,2,-9);scene.add(rim);
-const orbit=new THREE.Group();orbit.position.y=-3.75;scene.add(orbit);
+const orbit=new THREE.Group();orbit.position.y=-4.2;scene.add(orbit);
 const N=years.length,R=17,angleStep=2*Math.PI/N;
 const cards=[];
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -61,8 +61,9 @@ const grid=$('#year-grid');years.forEach((y,i)=>{const b=document.createElement(
 $('#all-years').onclick=()=>$('#index').classList.add('open');$('#close-index').onclick=()=>$('#index').classList.remove('open');
 function openYear(){
  if(locked)return;locked=true;selected=cards[focus];const c=selected;
- gsap.to(orbit.rotation,{y:target,duration:.35});
- gsap.timeline({onComplete:()=>showDetail(c.year)}).to(c.group.position,{x:0,y:0,z:20.3,duration:.65,ease:'power3.inOut'}).to(c.group.rotation,{x:0,y:c.a+Math.PI,z:0,duration:.6,ease:'power2.inOut'},'<');
+ gsap.timeline({onComplete:()=>showDetail(c.year)})
+ .to(c.group.position,{x:0,y:0,z:17.5,duration:.65,ease:'power3.inOut'})
+ .to(c.group.rotation,{x:0,y:Math.PI,z:0,duration:.6,ease:'power2.inOut'},'<');
 }
 function showDetail(y){
  $('#detail-year').textContent=y;$('#projects').replaceChildren();
@@ -71,11 +72,40 @@ function showDetail(y){
  else{$('#projects').innerHTML='<p>此年度作品內容請於得邑官網查看；尚未匯入完整的原始資料。</p>'}
  $('#official').href='https://www.de-yi.com.tw/classic.htm';$('#detail').classList.add('open');
 }
-function closeDetail(){if(!locked)return;$('#detail').classList.remove('open');const c=selected;gsap.to(c.group.position,{x:c.home.x,y:c.home.y,z:c.home.z,duration:.7,ease:'power3.inOut'});gsap.to(c.group.rotation,{x:c.base.x,y:c.base.y,z:c.base.z,duration:.7,onComplete:()=>{locked=false;selected=null}})}
+function closeDetail(){
+ if(!locked)return;
+ $('#detail').classList.remove('open');const c=selected;
+ gsap.to(c.group.rotation,{y:0,duration:.6});
+ locked=false;selected=null;
+}
 $('#close-detail').onclick=closeDetail;$('#detail').addEventListener('click',e=>{if(e.target.id==='detail')closeDetail()});document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDetail();$('#index').classList.remove('open')}if(!locked&&e.key==='ArrowLeft')select(focus-1);if(!locked&&e.key==='ArrowRight')select(focus+1)});
-function resize(){camera.aspect=innerWidth/innerHeight;camera.position.z=innerWidth<700?44:36;camera.fov=innerWidth<700?45:38;orbit.position.y=innerWidth<700?-5.5:-3.75;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}window.addEventListener('resize',resize);resize();
+function resize(){camera.aspect=innerWidth/innerHeight;camera.position.z=innerWidth<700?44:36;camera.fov=innerWidth<700?45:38;orbit.position.y=innerWidth<700?-5.8:-4.2;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}window.addEventListener('resize',resize);resize();
 const clock=new THREE.Clock();
-function tick(){const t=clock.getElapsedTime();if(!locked)orbit.rotation.y+=(target-orbit.rotation.y)*.08;
- cards.forEach((c,i)=>{if(c===selected)return;let radians=c.a+orbit.rotation.y;let distance=Math.abs(Math.atan2(Math.sin(radians),Math.cos(radians)))/angleStep;let scale=Math.max(.16,1.34*Math.pow(.68,distance));let k=c.group.scale.x+(scale-c.group.scale.x)*.18;c.group.scale.setScalar(k);c.group.position.y=(reduced?0:Math.sin(t*.6+i*.4)*.025)-Math.min(distance,4)*.13;c.group.rotation.z=-Math.sin(radians)*.07});
- renderer.render(scene,camera)}
+// Explicit visual carousel: the focused card is 1.28x, neighbors step down dramatically.
+const carouselSizes=[1.28,.84,.58,.4,.27,.18];
+function tick(){
+ const t=clock.getElapsedTime();
+ orbit.rotation.y=0;
+ cards.forEach((c,i)=>{
+  if(c===selected)return;
+  let offset=i-focus;
+  if(offset>N/2)offset-=N;if(offset< -N/2)offset+=N;
+  const n=Math.abs(offset),side=Math.sign(offset);
+  const visible=n<=5;
+  c.group.visible=visible;
+  if(!visible)return;
+  const scale=carouselSizes[Math.min(n,5)];
+  const x=side*([0,3.8,6.75,8.9,10.65,12.1][n]);
+  const z=[12.8,8.7,4.7,1.3,-1.4,-3.6][n];
+  const y=-Math.min(n,5)*.33+(reduced?0:Math.sin(t*.7+i*.4)*.035);
+  const ease=.14;
+  c.group.position.x+=(x-c.group.position.x)*ease;
+  c.group.position.y+=(y-c.group.position.y)*ease;
+  c.group.position.z+=(z-c.group.position.z)*ease;
+  c.group.rotation.y+=(side*Math.min(n*.23,.95)-c.group.rotation.y)*ease;
+  c.group.rotation.z+=(-side*Math.min(n*.045,.2)-c.group.rotation.z)*ease;
+  c.group.scale.setScalar(c.group.scale.x+(scale-c.group.scale.x)*ease);
+ });
+ renderer.render(scene,camera);
+}
 renderer.setAnimationLoop(tick);
