@@ -1,0 +1,32 @@
+name: Import official DE-YI photos
+on:
+  push:
+    paths:
+      - 'scripts/import_official_photos.py'
+      - '.github/workflows/import-deyi-photos.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import-photos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests beautifulsoup4 pillow
+      - name: Download official site photos
+        run: python scripts/import_official_photos.py
+      - name: Commit original photos and manifest
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/official
+          if ! git diff --cached --quiet; then
+            git commit -m "Import original DE-YI Classic Works photos"
+            git push
+          fi
