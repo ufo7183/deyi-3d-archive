@@ -2,6 +2,7 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.m
 import {gsap} from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/+esm';
 
 const years=Array.from({length:22},(_,i)=>2023-i);
+let officialManifest={};
 const works={
   2023:['等露','尋常院','借墨','掬茶金'],
   2022:['海洋恰恰','知一二','金宴'],
@@ -71,7 +72,7 @@ function tree(g,x,y,seed,scale=1){
  }
  g.restore();
 }
-function cover(year){
+function cover(year,realPhoto=null){
  const c=document.createElement('canvas');c.width=640;c.height=930;const g=c.getContext('2d');const seed=year-2000;
  const paper=g.createLinearGradient(0,0,640,930);paper.addColorStop(0,'#fffefb');paper.addColorStop(.55,'#fcfaf4');paper.addColorStop(1,'#ede3ce');
  g.fillStyle=paper;g.fillRect(0,0,640,930);
@@ -96,6 +97,14 @@ function cover(year){
  tree(g,155,753,seed,1.05);tree(g,544,781,seed+3,.87);
  for(let i=0;i<13;i++){elliptic(g,50+i*46,820+((i*13)%23),24,13,i%2?'#819f65':'#71945e')}
  g.restore();
+ if(realPhoto){
+  g.save();g.beginPath();g.rect(35,226,570,630);g.clip();
+  const ratio=Math.max(570/realPhoto.width,630/realPhoto.height);
+  const iw=realPhoto.width*ratio,ih=realPhoto.height*ratio;
+  g.drawImage(realPhoto,35+(570-iw)/2,226+(630-ih)/2,iw,ih);
+  const veil=g.createLinearGradient(0,690,0,856);veil.addColorStop(0,'rgba(255,255,255,0)');veil.addColorStop(1,'rgba(255,255,255,.45)');g.fillStyle=veil;g.fillRect(35,690,570,166);
+  g.restore();
+ }
  // Fashion-editorial white sweep and elegant gold corner accent.
  path(g,[[35,836],[183,806],[321,839],[474,806],[605,784],[605,887],[35,887]],'rgba(255,255,255,.9)');
  g.strokeStyle='#d4b178';g.lineWidth=2;g.beginPath();g.moveTo(35,838);g.bezierCurveTo(180,788,344,870,605,782);g.stroke();
@@ -118,7 +127,19 @@ years.forEach((year,i)=>{
  const mesh=new THREE.Mesh(cardShape,[goldEdge,goldEdge,goldEdge,goldEdge,new THREE.MeshStandardMaterial({map:tex,metalness:0,roughness:.8}),new THREE.MeshStandardMaterial({map:backTex,metalness:0,roughness:.8})]);
  group.add(mesh);stage.add(group);cards.push({year,index:i,group,mesh});mesh.userData.index=i;group.scale.setScalar(.01);
 });
-document.fonts?.ready.then(()=>{cards.forEach(c=>{const t=c.mesh.material[4].map;t.image=cover(c.year);t.needsUpdate=true})});
+document.fonts?.ready.then(()=>{cards.forEach(c=>{const t=c.mesh.material[4].map;if(!officialManifest[c.year]){t.image=cover(c.year);t.needsUpdate=true}})});
+async function loadOfficialGallery(){
+ try{
+  const res=await fetch('./assets/official/manifest.json',{cache:'no-store'});if(!res.ok)return;
+  const data=await res.json();officialManifest=data;
+  for(const c of cards){const item=data[c.year];if(!item?.cover)continue;
+   const photo=new Image();photo.onload=()=>{const texture=c.mesh.material[4].map;texture.image=cover(c.year,photo);texture.needsUpdate=true};
+   photo.onerror=()=>console.warn('Unable to load original DE-YI photo',c.year);
+   photo.src='./'+item.cover.replace(/^\\/?/, '');
+  }
+ }catch(err){console.info('Original photos not yet imported; retaining illustrated covers',err)}
+}
+loadOfficialGallery();
 // A single forward-tilted, bowl-shaped loop. The rear semicircle rises above the front cards.
 const track={
  x:[0,5.55,10.45,14.4,17.6,18.3,15.4,12.5,9,5.7,2.8,0],
@@ -177,6 +198,9 @@ function showYear(year){
  const list=works[year]||[];
  if(list.length){list.forEach(title=>{const box=document.createElement('article');box.className='project';const strong=document.createElement('strong');strong.textContent=title;const sub=document.createElement('span');sub.textContent='得邑建設經典作品';box.append(strong,sub);$('#projects').appendChild(box)})}
  else{const p=document.createElement('p');p.textContent='此年份尚待匯入完整作品名稱，請參考官網原始資料。';$('#projects').appendChild(p)}
+ const album=officialManifest[year]?.gallery||[];
+ if(album.length){const label=document.createElement('p');label.textContent='得邑官網原始作品照片（依官網素材順序顯示，未強制對應個別建案）';label.className='gallery-heading';$('#projects').appendChild(label);
+ album.forEach((item,index)=>{const figure=document.createElement('figure');figure.className='photo-entry';const img=document.createElement('img');img.src='./'+item.src;img.loading='lazy';img.alt=year+' 年得邑經典作品照片 '+(index+1);const cap=document.createElement('figcaption');cap.textContent=year+' · OFFICIAL IMAGE '+String(index+1).padStart(2,'0');figure.append(img,cap);$('#projects').append(figure)})}
  $('#official').href='https://www.de-yi.com.tw/'+year+'.htm';
  $('#detail').classList.add('open');$('#close-detail').focus();
 }
