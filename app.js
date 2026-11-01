@@ -120,10 +120,10 @@ years.forEach((year,i)=>{
 });
 document.fonts?.ready.then(()=>{cards.forEach(c=>{const t=c.mesh.material[4].map;t.image=cover(c.year);t.needsUpdate=true})});
 const track={
- x:[0,5.55,9.35,12.2,14.65,16.6,18.15,19.5,20.8],
+ x:[0,5.55,9.85,13.0,15.7,17.8,19.2,20.4,21.5],
  z:[13.6,11.5,8.7,5.8,3,0,-2.7,-5,-7],
- y:[-2.85,-2.4,-1.85,-1.15,-.45,.18,.72,1.22,1.65],
- size:[1.51,1.13,.89,.72,.57,.46,.37,.3,.24]
+ y:[-1.0,-1.22,-1.15,-.9,-.2,.35,.9,1.45,1.85],
+ size:[1.79,1.22,.94,.75,.6,.49,.4,.33,.26]
 };
 const steps=track.x.length-1;
 let cursor=0,target=0,dragging=false,dragged=false,dragOrigin=0,dragCursor=0,locked=false,active=null;
