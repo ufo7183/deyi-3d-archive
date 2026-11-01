@@ -11,7 +11,7 @@ $('#scene').append(renderer.domElement);
 scene.add(new THREE.AmbientLight(0xffe1b0,2.1));
 const light=new THREE.DirectionalLight(0xffd18a,3.1);light.position.set(-5,7,12);scene.add(light);
 const rim=new THREE.DirectionalLight(0x2a7190,1.4);rim.position.set(6,2,-9);scene.add(rim);
-const orbit=new THREE.Group();orbit.position.y=-2.2;scene.add(orbit);
+const orbit=new THREE.Group();orbit.position.y=-3.75;scene.add(orbit);
 const N=years.length,R=17,angleStep=2*Math.PI/N;
 const cards=[];
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -73,9 +73,9 @@ function showDetail(y){
 }
 function closeDetail(){if(!locked)return;$('#detail').classList.remove('open');const c=selected;gsap.to(c.group.position,{x:c.home.x,y:c.home.y,z:c.home.z,duration:.7,ease:'power3.inOut'});gsap.to(c.group.rotation,{x:c.base.x,y:c.base.y,z:c.base.z,duration:.7,onComplete:()=>{locked=false;selected=null}})}
 $('#close-detail').onclick=closeDetail;$('#detail').addEventListener('click',e=>{if(e.target.id==='detail')closeDetail()});document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDetail();$('#index').classList.remove('open')}if(!locked&&e.key==='ArrowLeft')select(focus-1);if(!locked&&e.key==='ArrowRight')select(focus+1)});
-function resize(){camera.aspect=innerWidth/innerHeight;camera.position.z=innerWidth<700?44:36;camera.fov=innerWidth<700?45:38;orbit.position.y=innerWidth<700?-3.5:-2.2;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}window.addEventListener('resize',resize);resize();
+function resize(){camera.aspect=innerWidth/innerHeight;camera.position.z=innerWidth<700?44:36;camera.fov=innerWidth<700?45:38;orbit.position.y=innerWidth<700?-5.5:-3.75;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}window.addEventListener('resize',resize);resize();
 const clock=new THREE.Clock();
 function tick(){const t=clock.getElapsedTime();if(!locked)orbit.rotation.y+=(target-orbit.rotation.y)*.08;
- cards.forEach((c,i)=>{if(c===selected)return;let front=Math.cos(c.a+orbit.rotation.y);// Deliberately exaggerated depth falloff: one large featured card, each side card progressively smaller.\n let scale=.30+1.02*Math.pow(Math.max(0,front),3.2);let k=c.group.scale.x+(scale-c.group.scale.x)*.08;c.group.scale.setScalar(k);c.group.position.y=reduced?0:Math.sin(t*.6+i*.4)*.035;c.group.rotation.z=-Math.sin(c.a+orbit.rotation.y)*.07});
+ cards.forEach((c,i)=>{if(c===selected)return;let radians=c.a+orbit.rotation.y;let distance=Math.abs(Math.atan2(Math.sin(radians),Math.cos(radians)))/angleStep;let scale=Math.max(.16,1.34*Math.pow(.68,distance));let k=c.group.scale.x+(scale-c.group.scale.x)*.18;c.group.scale.setScalar(k);c.group.position.y=(reduced?0:Math.sin(t*.6+i*.4)*.025)-Math.min(distance,4)*.13;c.group.rotation.z=-Math.sin(radians)*.07});
  renderer.render(scene,camera)}
 renderer.setAnimationLoop(tick);
